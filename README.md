@@ -4,7 +4,7 @@ Este plugin é um gerador de código Java Spring que permite criar APIs REST de 
 ### Requisitos
 
 - Java 8+
-- Spring 3+
+- Spring 3+ previamente configurado (`spring-boot-starter`, `spring-boot-starter-data-jdbc`, `spring-boot-starter-data-jpa`, ...)
 - biblioteca ModelMapper (`org.modelmapper`) no pom do projeto alvo
 <pre>
 <span style="color: rgba(255, 165, 0, 0.7);">import</span> org.springframework.context.annotation.<span style="color: yellow;">Configuration</span>;
