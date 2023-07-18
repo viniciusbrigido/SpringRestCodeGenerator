@@ -1,0 +1,43 @@
+<idea-plugin>
+    <id>com.brigido.springrestcodegenerator</id>
+
+    <name>Spring Rest Code Generator</name>
+
+    <vendor email="brigido.viniciuss@gmail.com" url="https://github.com/viniciusbrigido">
+        Brigido
+    </vendor>
+
+    <description><![CDATA[
+    Plugin para gerar uma API Spring Rest de maneira mais fácil.<br>
+    Este plugin adiciona recursos de geração automática de código para facilitar o desenvolvimento de APIs RESTful usando o framework Spring.<br>
+    Ele fornece templates pré-definidos e suporte para personalização, permitindo que você gere rapidamente o código de estruturas básicas, como controladores, serviços e modelos.<br>
+    Para usar o plugin, acesse o menu "Ferramentas" e selecione "Gerar Código Spring REST".<br>
+    Mais informações e documentação podem ser encontradas nesse <a href="https://github.com/viniciusbrigido/SpringRestCodeGenerator">repositório do GitHub</a>.<br>
+  ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+
+    </extensions>
+
+    <actions>
+
+        <group id="com.brigido.springrestcodegenerator.dialog.CodeGeneratorGroup"
+               text="Code Generator"
+               description="Code generation actions"
+               popup="true">
+            <add-to-group group-id="MainMenu" anchor="last" />
+        </group>
+
+        <action id="com.brigido.springrestcodegenerator.dialog.CodeGeneratorDialogAction"
+                class="com.brigido.springrestcodegenerator.dialog.CodeGeneratorDialogAction"
+                text="Generate Code"
+                description="Generate code using the SpringRestCodeGenerator">
+
+            <keyboard-shortcut first-keystroke="ctrl g" keymap="$default"/>
+            <add-to-group group-id="com.brigido.springrestcodegenerator.dialog.CodeGeneratorGroup"
+                          anchor="first" />
+        </action>
+    </actions>
+</idea-plugin>
