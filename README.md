@@ -152,7 +152,7 @@ Para utilizar o gerador, siga as etapas abaixo:
 
 1- Instale o Plugin
 
-2- Na IDE, aperte o atalho `Ctrl + G`, abrirá a seguinte modal para configuração
+2- Na IDE, aperte o atalho `Ctrl + Alt + G`, abrirá a seguinte modal para configuração
 
 ![Modal](modal.jpg)
 
