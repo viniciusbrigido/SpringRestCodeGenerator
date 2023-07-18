@@ -15,7 +15,8 @@
     Mais informações e documentação podem ser encontradas nesse <a href="https://github.com/viniciusbrigido/SpringRestCodeGenerator">repositório do GitHub</a>.<br>
   ]]></description>
 
-    <depends>com.intellij.modules.platform</depends>
+    <idea-version since-build="223.0"/>
+    <depends>com.intellij.modules.all</depends>
 
     <extensions defaultExtensionNs="com.intellij">
 
