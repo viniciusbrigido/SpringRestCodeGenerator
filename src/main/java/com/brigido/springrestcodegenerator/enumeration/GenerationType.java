@@ -1,6 +1,5 @@
 package com.brigido.springrestcodegenerator.enumeration;
 
-import static java.lang.String.format;
 import static java.util.Arrays.stream;
 
 public enum GenerationType {
@@ -10,7 +9,7 @@ public enum GenerationType {
         return stream(GenerationType.values())
                 .filter(generationType -> generationType.name().equalsIgnoreCase(generationTypeString))
                 .findFirst()
-                .map(generationType -> format("\t@GeneratedValue(strategy = GenerationType.%s)\n", generationType.name()))
+                .map(generationType -> "\t@GeneratedValue(strategy = GenerationType.%s)\n".formatted(generationType.name()))
                 .orElse("");
     }
 }

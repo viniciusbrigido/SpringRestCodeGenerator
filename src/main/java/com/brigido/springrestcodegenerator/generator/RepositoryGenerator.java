@@ -4,7 +4,6 @@ import com.brigido.springrestcodegenerator.dto.PropertyDTO;
 import com.brigido.springrestcodegenerator.dto.TableDTO;
 import java.io.IOException;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
-import static java.lang.String.*;
 
 public class RepositoryGenerator extends BaseGenerator {
 
@@ -20,7 +19,7 @@ public class RepositoryGenerator extends BaseGenerator {
 
     private String getRepositoryCode(TableDTO tableDTO) {
         StringBuilder code = new StringBuilder();
-        String interfaceName = format("public interface %sRepository extends JpaRepository<%s, %s> {\n}",
+        String interfaceName = "public interface %sRepository extends JpaRepository<%s, %s> {\n}".formatted(
                 tableDTO.getTable(), tableDTO.getTable(), tableDTO.getIdType());
 
         code.append(getPackageName(getRepositoryDirectory(directory)))

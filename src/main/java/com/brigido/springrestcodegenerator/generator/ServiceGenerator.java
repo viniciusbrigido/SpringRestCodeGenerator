@@ -4,7 +4,6 @@ import com.brigido.springrestcodegenerator.dto.PropertyDTO;
 import com.brigido.springrestcodegenerator.dto.TableDTO;
 import java.io.IOException;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
-import static java.lang.String.format;
 
 public class ServiceGenerator extends BaseGenerator {
 
@@ -20,7 +19,7 @@ public class ServiceGenerator extends BaseGenerator {
 
     private String getServiceCode(TableDTO tableDTO) {
         StringBuilder code = new StringBuilder();
-        String interfaceName = format("public interface %sService {\n\n", tableDTO.getTable());
+        String interfaceName = "public interface %sService {\n\n".formatted(tableDTO.getTable());
 
         code.append(getPackageName(getServiceDirectory(directory)))
             .append(getImports(tableDTO))
@@ -55,16 +54,16 @@ public class ServiceGenerator extends BaseGenerator {
         StringBuilder crudMethods = new StringBuilder();
         String objectNameLowerCase = lowerCaseFirstLetter(tableDTO.getTable());
 
-        String methodCreateName = format("\t%sResponseDTO create(%sPersistDTO %sPersistDTO);\n",
+        String methodCreateName = "\t%sResponseDTO create(%sPersistDTO %sPersistDTO);\n".formatted(
                 tableDTO.getTable(), tableDTO.getTable(), objectNameLowerCase);
 
-        String methodFindByIdName = format("\t%s findById(%s id);\n",
+        String methodFindByIdName = "\t%s findById(%s id);\n".formatted(
                 tableDTO.getTable(), tableDTO.getIdType());
 
-        String methodFindByIdDTOName = format("\t%sResponseDTO findByIdDTO(%s id);\n",
+        String methodFindByIdDTOName = "\t%sResponseDTO findByIdDTO(%s id);\n".formatted(
                 tableDTO.getTable(), tableDTO.getIdType());
 
-        String methodDeleteName = format("\tvoid delete(%s id);\n", tableDTO.getIdType());
+        String methodDeleteName = "\tvoid delete(%s id);\n".formatted(tableDTO.getIdType());
 
         crudMethods.append(methodCreateName)
                    .append(methodFindByIdName)
@@ -72,13 +71,13 @@ public class ServiceGenerator extends BaseGenerator {
                    .append(methodDeleteName);
 
         if (tableDTO.hasUpdate()) {
-            String methodUpdateName = format("\t%sResponseDTO update(%sUpdateDTO %sUpdateDTO);\n",
+            String methodUpdateName = "\t%sResponseDTO update(%sUpdateDTO %sUpdateDTO);\n".formatted(
                     tableDTO.getTable(), tableDTO.getTable(), objectNameLowerCase);
 
             crudMethods.append(methodUpdateName);
         }
 
-        String methodFindAllName = format("\tList<%sResponseDTO> findAll();\n", tableDTO.getTable());
+        String methodFindAllName = "\tList<%sResponseDTO> findAll();\n".formatted(tableDTO.getTable());
         crudMethods.append(methodFindAllName);
 
         return crudMethods.toString();

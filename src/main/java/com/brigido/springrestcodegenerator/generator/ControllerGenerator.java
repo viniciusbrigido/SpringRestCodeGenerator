@@ -4,7 +4,6 @@ import com.brigido.springrestcodegenerator.dto.PropertyDTO;
 import com.brigido.springrestcodegenerator.dto.TableDTO;
 import java.io.IOException;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
-import static java.lang.String.format;
 
 public class ControllerGenerator extends BaseGenerator {
 
@@ -14,13 +13,13 @@ public class ControllerGenerator extends BaseGenerator {
         setPropertyDTO(propertyDTO);
         this.directory = directory;
 
-        String fileName = format("%s%s.java", tableDTO.getTable(), getControllerName());
+        String fileName = "%s%s.java".formatted(tableDTO.getTable(), getControllerName());
         createFile(getControllerDirectory(directory), fileName, getControllerCode(tableDTO));
     }
 
     private String getControllerCode(TableDTO tableDTO) {
         StringBuilder code = new StringBuilder();
-        String className = format("public class %s%s {\n\n", tableDTO.getTable(), getControllerName());
+        String className = "public class %s%s {\n\n".formatted(tableDTO.getTable(), getControllerName());
 
         code.append(getPackageName(getControllerDirectory(directory)))
             .append(getImports(tableDTO))
@@ -79,7 +78,7 @@ public class ControllerGenerator extends BaseGenerator {
     private String getCreateMethod(String table) {
         StringBuilder createMethod = new StringBuilder();
         String objectNameLowerCase = lowerCaseFirstLetter(table);
-        String methodName = format("\tpublic ResponseEntity<%sResponseDTO> create(@RequestBody %sPersistDTO %sPersistDTO) {\n",
+        String methodName = "\tpublic ResponseEntity<%sResponseDTO> create(@RequestBody %sPersistDTO %sPersistDTO) {\n".formatted(
                 table, table, objectNameLowerCase);
 
         createMethod.append("\t@PostMapping(\"create\")\n")
@@ -94,7 +93,7 @@ public class ControllerGenerator extends BaseGenerator {
 
     private String getFindByIdMethod(TableDTO tableDTO) {
         StringBuilder findByIdMethod = new StringBuilder();
-        String methodName = format("\tpublic ResponseEntity<%sResponseDTO> findById(@PathVariable %s id) {\n",
+        String methodName = "\tpublic ResponseEntity<%sResponseDTO> findById(@PathVariable %s id) {\n".formatted(
                 tableDTO.getTable(), tableDTO.getIdType());
 
         findByIdMethod.append("\t@GetMapping(\"{id}\")\n")
@@ -107,7 +106,7 @@ public class ControllerGenerator extends BaseGenerator {
 
     private String getDeleteMethod(TableDTO tableDTO) {
         StringBuilder deleteMethod = new StringBuilder();
-        String methodName = format("\tpublic ResponseEntity<Void> delete(@PathVariable %s id) {\n", tableDTO.getIdType());
+        String methodName = "\tpublic ResponseEntity<Void> delete(@PathVariable %s id) {\n".formatted(tableDTO.getIdType());
 
         deleteMethod.append("\t@DeleteMapping(\"{id}\")\n")
                     .append(methodName)
@@ -125,7 +124,7 @@ public class ControllerGenerator extends BaseGenerator {
 
         StringBuilder updateMethod = new StringBuilder();
         String objectNameLowerCase = lowerCaseFirstLetter(tableDTO.getTable());
-        String methodName = format("\tpublic ResponseEntity<%sResponseDTO> update(@RequestBody %sUpdateDTO %sUpdateDTO) {\n",
+        String methodName = "\tpublic ResponseEntity<%sResponseDTO> update(@RequestBody %sUpdateDTO %sUpdateDTO) {\n".formatted(
                 tableDTO.getTable(), tableDTO.getTable(), objectNameLowerCase);
 
         updateMethod.append("\t@PutMapping(\"update\")\n")
@@ -139,7 +138,7 @@ public class ControllerGenerator extends BaseGenerator {
 
     private String getFindAllMethod(String table) {
         StringBuilder findAllMethod = new StringBuilder();
-        String methodName = format("\tpublic ResponseEntity<List<%sResponseDTO>> findAll() {\n", table);
+        String methodName = "\tpublic ResponseEntity<List<%sResponseDTO>> findAll() {\n".formatted(table);
 
         findAllMethod.append("\t@GetMapping\n")
                     .append(methodName)

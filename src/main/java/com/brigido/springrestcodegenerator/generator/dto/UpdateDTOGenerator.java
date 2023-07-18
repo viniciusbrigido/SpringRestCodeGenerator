@@ -4,7 +4,6 @@ import com.brigido.springrestcodegenerator.dto.*;
 import com.brigido.springrestcodegenerator.generator.BaseGenerator;
 import java.io.IOException;
 import java.util.List;
-import static java.lang.String.format;
 
 public class UpdateDTOGenerator extends BaseGenerator {
 
@@ -23,7 +22,7 @@ public class UpdateDTOGenerator extends BaseGenerator {
 
     private String getResponseDTOCode(TableDTO tableDTO, List<String> enums) {
         StringBuilder code = new StringBuilder();
-        String className = format("public class %sUpdateDTO {\n\n", tableDTO.getTable());
+        String className = "public class %sUpdateDTO {\n\n".formatted(tableDTO.getTable());
 
         code.append(getPackageName(getDTODirectory(directory)))
             .append(getImports(tableDTO, enums))
@@ -46,7 +45,7 @@ public class UpdateDTOGenerator extends BaseGenerator {
     }
 
     private String getFieldCode(ColumnDTO columnDTO) {
-        return format("\tprivate %s %s;\n\n", columnDTO.getType(), columnDTO.getName());
+        return "\tprivate %s %s;\n\n".formatted(columnDTO.getType(), columnDTO.getName());
     }
 
     private String getImports(TableDTO tableDTO, List<String> enums) {

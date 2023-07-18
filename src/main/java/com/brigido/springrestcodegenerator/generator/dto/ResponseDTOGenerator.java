@@ -22,7 +22,7 @@ public class ResponseDTOGenerator extends BaseGenerator {
 
     private String getResponseDTOCode(TableDTO tableDTO, List<String> enums) {
         StringBuilder code = new StringBuilder();
-        String className = format("public class %sResponseDTO {\n\n", tableDTO.getTable());
+        String className = "public class %sResponseDTO {\n\n".formatted(tableDTO.getTable());
 
         code.append(getPackageName(getDTODirectory(directory)))
             .append(getImports(tableDTO, enums))
@@ -50,8 +50,8 @@ public class ResponseDTOGenerator extends BaseGenerator {
             return "";
         }
 
-        String typeFormatted = columnDTO.isList() ? format("%s<%s>", LIST.getName(), columnDTO.getType()) : columnDTO.getType();
-        String propertyName = format("\tprivate %s %s;\n\n", typeFormatted, columnDTO.getName());
+        String typeFormatted = columnDTO.isList() ? "%s<%s>".formatted(LIST.getName(), columnDTO.getType()) : columnDTO.getType();
+        String propertyName = "\tprivate %s %s;\n\n".formatted(typeFormatted, columnDTO.getName());
         fieldCode.append(propertyName);
 
         return fieldCode.toString();

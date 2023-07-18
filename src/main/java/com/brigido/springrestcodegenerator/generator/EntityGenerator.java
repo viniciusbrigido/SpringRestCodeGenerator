@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
-import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
@@ -25,7 +24,7 @@ public class EntityGenerator extends BaseGenerator {
 
     private String getEntityCode(TableDTO tableDTO, List<String> enums) {
         StringBuilder code = new StringBuilder();
-        String className = format("public class %s %s{\n\n", tableDTO.getTable(), getSerializableImplements());
+        String className = "public class %s %s{\n\n".formatted(tableDTO.getTable(), getSerializableImplements());
 
         code.append(getPackageName(getEntityDirectory(directory)))
             .append(getImports(tableDTO, enums))
@@ -88,8 +87,8 @@ public class EntityGenerator extends BaseGenerator {
                      .append(getGeneratedValue(columnDTO));
         }
 
-        String typeFormatted = columnDTO.isList() ? format("List<%s>", columnDTO.getType()) : columnDTO.getType();
-        String propertyName = format("\tprivate %s %s;\n", typeFormatted, columnDTO.getName());
+        String typeFormatted = columnDTO.isList() ? "List<%s>".formatted(columnDTO.getType()) : columnDTO.getType();
+        String propertyName = "\tprivate %s %s;\n".formatted(typeFormatted, columnDTO.getName());
 
         fieldCode.append(getCardinality(columnDTO))
                  .append(getColumnName(columnDTO))
@@ -102,20 +101,28 @@ public class EntityGenerator extends BaseGenerator {
         List<String> configsField = new ArrayList<>();
         String nameSnakeCase = parseCamelCaseToSnakeCase(columnDTO.getName());
 
+        if (nonNull(columnDTO.getCardinality())) {
+            configsField.add("name = \"id_%s\"".formatted(nameSnakeCase));
+        } else if (!nameSnakeCase.equals(columnDTO.getName())) {
+             configsField.add("name = \"%s\"".formatted(nameSnakeCase));
+        }
+
         if (columnDTO.isRequired()) {
             configsField.add("nullable = false");
         }
         if (columnDTO.getType().equals("String") && nonNull(columnDTO.getLength())) {
-            configsField.add(format("length = %s", columnDTO.getLength()));
+            configsField.add("length = %s".formatted(columnDTO.getLength()));
         }
-        if (!nameSnakeCase.equals(columnDTO.getName())) {
-            configsField.add(format("name = \"%s\"", nameSnakeCase));
+        if (columnDTO.isUnique()) {
+            configsField.add("unique = true");
         }
 
         if (configsField.isEmpty()) {
             return "";
         }
-        return format("\t@Column(%s)\n", join(", ", configsField));
+
+        String joinColumn = nonNull(columnDTO.getCardinality()) ? "Join" : "";
+        return "\t@%sColumn(%s)\n".formatted(joinColumn, join(", ", configsField));
     }
 
     private String getCardinality(ColumnDTO columnDTO) {
@@ -144,7 +151,7 @@ public class EntityGenerator extends BaseGenerator {
 
         StringBuilder updateMethod = new StringBuilder();
         String objectNameLowerCase = lowerCaseFirstLetter(tableDTO.getTable());
-        String methodName = format("\tpublic void update(%sUpdateDTO %sUpdateDTO) {\n", tableDTO.getTable(), objectNameLowerCase);
+        String methodName = "\tpublic void update(%sUpdateDTO %sUpdateDTO) {\n".formatted(tableDTO.getTable(), objectNameLowerCase);
 
         updateMethod.append(methodName);
 

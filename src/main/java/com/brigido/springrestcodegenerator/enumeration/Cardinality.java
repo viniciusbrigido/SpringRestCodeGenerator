@@ -1,6 +1,5 @@
 package com.brigido.springrestcodegenerator.enumeration;
 
-import static java.lang.String.format;
 import static java.util.Arrays.*;
 
 public enum Cardinality {
@@ -24,7 +23,7 @@ public enum Cardinality {
         return stream(Cardinality.values())
                 .filter(cardinality -> cardinality.getName().equalsIgnoreCase(cardinalityString))
                 .findFirst()
-                .map(cardinality -> format("\t@%s\n", cardinality.getName()))
+                .map(cardinality -> "\t@%s\n".formatted(cardinality.getName()))
                 .orElse("");
     }
 }

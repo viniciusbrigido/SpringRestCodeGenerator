@@ -9,6 +9,7 @@ public class ColumnDTO {
     private boolean required;
     private boolean updatable;
     private boolean list;
+    private boolean unique;
     private String generationType;
     private String cardinality;
 
@@ -16,7 +17,7 @@ public class ColumnDTO {
     }
 
     public ColumnDTO(String name, String type, Integer length, boolean primaryKey, boolean required, boolean updatable,
-                     boolean list, String generationType, String cardinality) {
+                     boolean list, boolean unique, String generationType, String cardinality) {
         this.name = name;
         this.type = type;
         this.length = length;
@@ -24,6 +25,7 @@ public class ColumnDTO {
         this.required = required;
         this.updatable = updatable;
         this.list = list;
+        this.unique = unique;
         this.generationType = generationType;
         this.cardinality = cardinality;
     }
@@ -82,6 +84,14 @@ public class ColumnDTO {
 
     public void setList(boolean list) {
         this.list = list;
+    }
+
+    public boolean isUnique() {
+        return unique;
+    }
+
+    public void setUnique(boolean unique) {
+        this.unique = unique;
     }
 
     public String getGenerationType() {

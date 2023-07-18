@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
-import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static java.util.Objects.*;
 
@@ -25,7 +24,7 @@ public class PersistDTOGenerator extends BaseGenerator {
 
     private String getResponseDTOCode(TableDTO tableDTO, Map<String, String> entitiesId, List<String> enums) {
         StringBuilder code = new StringBuilder();
-        String className = format("public class %sPersistDTO {\n\n", tableDTO.getTable());
+        String className = "public class %sPersistDTO {\n\n".formatted(tableDTO.getTable());
 
         code.append(getPackageName(getDTODirectory(directory)))
             .append(getImports(tableDTO, entitiesId, enums))
@@ -58,13 +57,13 @@ public class PersistDTOGenerator extends BaseGenerator {
             AtomicReference<String> fieldCode = new AtomicReference<>("");
             entitiesId.forEach((table, primaryKey) -> {
                 if (table.equals(columnDTO.getType())) {
-                    fieldCode.set(format("%s\tprivate %s %sId;\n\n", required, primaryKey, lowerCaseFirstLetter(table)));
+                    fieldCode.set("%s\tprivate %s %sId;\n\n".formatted(required, primaryKey, lowerCaseFirstLetter(table)));
                 }
             });
 
             return fieldCode.get();
         }
-        return format("%s\tprivate %s %s;\n\n", required, columnDTO.getType(), columnDTO.getName());
+        return "%s\tprivate %s %s;\n\n".formatted(required, columnDTO.getType(), columnDTO.getName());
     }
 
     private String getImports(TableDTO tableDTO, Map<String, String> entitiesId, List<String> enums) {

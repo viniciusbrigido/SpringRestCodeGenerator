@@ -7,7 +7,6 @@ import java.util.*;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
 import static java.lang.Character.*;
 import static java.lang.String.*;
-import static java.lang.String.format;
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 
@@ -45,7 +44,7 @@ public abstract class BaseGenerator {
     }
 
     public String getPackageName(String directory) {
-        return format("package %s;\n\n", convertDirectoryToPackage(directory));
+        return "package %s;\n\n".formatted(convertDirectoryToPackage(directory));
     }
 
     public String parseCamelCaseToSnakeCase(String input) {
@@ -161,17 +160,17 @@ public abstract class BaseGenerator {
 
         StringBuilder constructors = new StringBuilder();
 
-        String emptyConstructor = format("\tpublic %s%s() {\n\t}\n\n", tableDTO.getTable(), sufix);
+        String emptyConstructor = "\tpublic %s%s() {\n\t}\n\n".formatted(tableDTO.getTable(), sufix);
         constructors.append(emptyConstructor);
 
         List<String> properties = new ArrayList<>();
         List<String> setterLines = new ArrayList<>();
         for (ColumnDTO columnDTO : tableDTO.getColumns()) {
-            properties.add(format("%s %s", columnDTO.getType(), columnDTO.getName()));
-            setterLines.add(format("\t\tthis.%s = %s;\n", columnDTO.getName(), columnDTO.getName()));
+            properties.add("%s %s".formatted(columnDTO.getType(), columnDTO.getName()));
+            setterLines.add("\t\tthis.%s = %s;\n".formatted(columnDTO.getName(), columnDTO.getName()));
         }
 
-        String fullConstructor = format("\tpublic %s(%s) {\n", tableDTO.getTable(), join(", ", properties));
+        String fullConstructor = "\tpublic %s(%s) {\n".formatted(tableDTO.getTable(), join(", ", properties));
         constructors.append(fullConstructor);
         setterLines.forEach(constructors::append);
         constructors.append("\t}\n\n");
@@ -186,12 +185,12 @@ public abstract class BaseGenerator {
 
         StringBuilder gettersSetters = new StringBuilder();
         for (ColumnDTO columnDTO : tableDTO.getColumns()) {
-            String methodGetName = format("\tpublic %s get%s() {\n", columnDTO.getType(), capitalizeFirstLetter(columnDTO.getName()));
+            String methodGetName = "\tpublic %s get%s() {\n".formatted(columnDTO.getType(), capitalizeFirstLetter(columnDTO.getName()));
             gettersSetters.append(methodGetName)
                           .append("\t\treturn ").append(columnDTO.getName()).append(";\n")
                           .append("\t}\n\n");
 
-            String methodSetName = format("\tpublic void set%s(%s %s) {\n", capitalizeFirstLetter(columnDTO.getName()), columnDTO.getType(), columnDTO.getName());
+            String methodSetName = "\tpublic void set%s(%s %s) {\n".formatted(capitalizeFirstLetter(columnDTO.getName()), columnDTO.getType(), columnDTO.getName());
             gettersSetters.append(methodSetName)
                           .append("\t\tthis.").append(columnDTO.getName()).append(" = ").append(columnDTO.getName()).append(";\n")
                           .append("\t}\n\n");
@@ -218,31 +217,31 @@ public abstract class BaseGenerator {
     }
 
     public String getControllerDirectory(String directory) {
-        return format("%s/%s", directory, propertyDTO.getPackageController());
+        return "%s/%s".formatted(directory, propertyDTO.getPackageController());
     }
 
     public String getDTODirectory(String directory) {
-        return format("%s/dto", directory);
+        return "%s/dto".formatted(directory);
     }
 
     public String getEntityDirectory(String directory) {
-        return format("%s/%s", directory, propertyDTO.getPackageEntity());
+        return "%s/%s".formatted(directory, propertyDTO.getPackageEntity());
     }
 
     public String getRepositoryDirectory(String directory) {
-        return format("%s/repository", directory);
+        return "%s/repository".formatted(directory);
     }
 
     public String getServiceDirectory(String directory) {
-        return format("%s/service", directory);
+        return "%s/service".formatted(directory);
     }
 
     public String getServiceImplDirectory(String directory) {
-        return format("%s/service/impl", directory);
+        return "%s/service/impl".formatted(directory);
     }
 
     public String getEnumerationDirectory(String directory) {
-        return format("%s/enumeration", directory);
+        return "%s/enumeration".formatted(directory);
     }
 
     public PropertyDTO getPropertyDTO() {

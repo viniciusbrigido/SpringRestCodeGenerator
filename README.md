@@ -6,84 +6,83 @@ Este plugin é um gerador de código Java Spring que permite criar APIs REST de 
 - Java 8+
 - Spring 3+ previamente configurado (`spring-boot-starter`, `spring-boot-starter-data-jdbc`, `spring-boot-starter-web`, `spring-boot-starter-data-jpa`, ...)
 - biblioteca ModelMapper (`org.modelmapper`) no pom do projeto alvo
-<pre>
-<span style="color: rgba(255, 165, 0, 0.7);">import</span> org.springframework.context.annotation.<span style="color: yellow;">Configuration</span>;
-<span style="color: rgba(255, 165, 0, 0.7);">import</span> org.springframework.context.annotation.<span style="color: yellow;">Bean</span>;
-<span style="color: rgba(255, 165, 0, 0.7);">import</span> org.modelmapper.ModelMapper;
 
-<span style="color: yellow;">@Configuration</span>
-<span style="color: rgba(255, 165, 0, 0.7);">public class</span> BeanConfig {
 
-    <span style="color: yellow;">@Bean</span>
-    <span style="color: rgba(255, 165, 0, 0.7);">public</span> ModelMapper <span style="color: #c0c043;">modelMapper()</span> {
-        ModelMapper modelMapper = <span style="color: rgba(255, 165, 0, 0.7);">new</span> ModelMapper();
-        modelMapper.getConfiguration().setAmbiguityIgnored(<span style="color: rgba(255, 165, 0, 0.7);">true</span>);
-        <span style="color: rgba(255, 165, 0, 0.7);">return</span> modelMapper;
+```java
+@Configuration
+public class BeanConfig {
+
+    @Bean
+    public ModelMapper modelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setAmbiguityIgnored(true);
+        return modelMapper;
     }
 }
-</pre>
-
+```
 
 ## A definição de entidades segue a seguinte sintaxe de objetos:
 
 #### Envio completo:
 
-<pre>
-<span style="color: rgba(255, 165, 0, 0.7);">public class</span> RequestDTO {
-    <span style="color: rgba(255, 165, 0, 0.7);">private</span> List &lt TableDTO &gt <span style="color: rgba(166,127,210,0.7);">tables</span>;
-    <span style="color: rgba(255, 165, 0, 0.7);">private</span> List &lt EnumDTO &gt <span style="color: rgba(166,127,210,0.7);">enums</span>;
-}
-</pre>
 
-<pre>
-{
-    "tables": [
-        {
-            "table": "Cachorro",
-            "columns": [
-                {
-                    "name": "id",
-                    "type": "UUID",
-                    "primaryKey": true
-                },
-                {
-                    "name": "raca",
-                    "type": "Raca"
-                }
-            ]
-        }
-    ],
-    "enums": [
-	    {
-	    	"name": "Raca",
-	    	"values": ["golden", "viraLata"]
-	    }
-    ]
+```java
+public class RequestDTO {
+  private List<TableDTO> tables;
+  private List<EnumDTO> enums;
 }
-</pre>
+```
+
+```json
+{
+  "tables": [
+    {
+      "table": "Cachorro",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "primaryKey": true
+        },
+        {
+          "name": "raca",
+          "type": "Raca"
+        }
+      ]
+    }
+  ],
+  "enums": [
+    {
+      "name": "Raca",
+      "values": ["golden", "viraLata"]
+    }
+  ]
+}
+```
 
 ### Sintaxe de definição de entidades
 
-<pre>
-<span style="color: rgba(255, 165, 0, 0.7);">public class</span> TableDTO {
-    <span style="color: rgba(255, 165, 0, 0.7);">private</span> String <span style="color: rgba(166,127,210,0.7);">table</span>;
-    <span style="color: rgba(255, 165, 0, 0.7);">private</span> List &lt ColumnDTO &gt <span style="color: rgba(166,127,210,0.7);">columns</span>;
+```java
+public class TableDTO {
+    private String table;
+    private List<ColumnDTO> columns;
 }
-</pre>
+```
 
-<pre>
-<span style="color: rgba(255, 165, 0, 0.7);">public class</span> ColumnDTO {
-    <span style="color: rgba(255, 165, 0, 0.7);">private</span> String <span style="color: rgba(166,127,210,0.7);">name</span>;
-    <span style="color: rgba(255, 165, 0, 0.7);">private</span> String <span style="color: rgba(166,127,210,0.7);">type</span>;
-    <span style="color: rgba(255, 165, 0, 0.7);">private</span> Integer <span style="color: rgba(166,127,210,0.7);">length</span>;
-    <span style="color: rgba(255, 165, 0, 0.7);">private boolean</span> <span style="color: rgba(166,127,210,0.7);">primaryKey</span>;
-    <span style="color: rgba(255, 165, 0, 0.7);">private boolean</span> <span style="color: rgba(166,127,210,0.7);">required</span>;
-    <span style="color: rgba(255, 165, 0, 0.7);">private boolean</span> <span style="color: rgba(166,127,210,0.7);">updatable</span>;
-    <span style="color: rgba(255, 165, 0, 0.7);">private boolean</span> <span style="color: rgba(166,127,210,0.7);">list</span>;
-    <span style="color: rgba(255, 165, 0, 0.7);">private</span> String <span style="color: rgba(166,127,210,0.7);">generationType</span>;
-    <span style="color: rgba(255, 165, 0, 0.7);">private</span> String <span style="color: rgba(166,127,210,0.7);">cardinality</span>;
+```java
+public class ColumnDTO {
+    private String name;
+    private String type;
+    private Integer length;
+    private boolean primaryKey;
+    private boolean required;
+    private boolean updatable;
+    private boolean list;
+    private boolean unique;
+    private String generationType;
+    private String cardinality;
 }
-</pre>
+```
 
 `table:` Nome da entidade (deve ser camelCase e iniciar com letra Maiúscula).
 
@@ -106,33 +105,33 @@ Este plugin é um gerador de código Java Spring que permite criar APIs REST de 
 
 #### Aqui está um exemplo de definição de entidade:
 
-<pre>
+```json
 {
-      "table": "Cachorro",
-      "columns": [
-        {
-          "name": "id",
-          "type": "UUID",
-          "primaryKey": true
-        },
-        {
-          "name": "raca",
-          "type": "Raca"
-        }
-      ]
+  "table": "Cachorro",
+  "columns": [
+    {
+      "name": "id",
+      "type": "UUID",
+      "primaryKey": true
+    },
+    {
+      "name": "raca",
+      "type": "Raca"
     }
-</pre>
+  ]
+}
+```
 
 ### Sintaxe de definição de enums
 
 A definição de enums segue a seguinte sintaxe:
 
-<pre>
-<span style="color: rgba(255, 165, 0, 0.7);">public class</span> EnumDTO {
-    <span style="color: rgba(255, 165, 0, 0.7);">private</span> String <span style="color: rgba(166,127,210,0.7);">name</span>;
-    <span style="color: rgba(255, 165, 0, 0.7);">private</span> List &lt String &gt <span style="color: rgba(166,127,210,0.7);">values</span>;
+```java
+public class EnumDTO {
+    private String name;
+    private List<String> values;
 }
-</pre>
+```
 
 `name:` Nome do enum (deve ser camelCase).
 
@@ -140,12 +139,12 @@ A definição de enums segue a seguinte sintaxe:
 
 #### Aqui está um exemplo de definição de enum:
 
-<pre>
+```json
 {
-	"name": "Raca",
-	"values": ["golden", "viraLata"]
+  "name": "Raca",
+  "values": ["golden", "viraLata"]
 }
-</pre>
+```
 
 ### Como utilizar
 Para utilizar o gerador, siga as etapas abaixo:
