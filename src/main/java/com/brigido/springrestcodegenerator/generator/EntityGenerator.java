@@ -101,8 +101,8 @@ public class EntityGenerator extends BaseGenerator {
         List<String> configsField = new ArrayList<>();
         String nameSnakeCase = parseCamelCaseToSnakeCase(columnDTO.getName());
 
-        if (nonNull(columnDTO.getCardinality())) {
-            configsField.add("name = \"id_%s\"".formatted(nameSnakeCase));
+        if (nonNull(columnDTO.getCardinality()) && !columnDTO.isList()) {
+            configsField.add("name = \"%s_id\"".formatted(nameSnakeCase));
         } else if (!nameSnakeCase.equals(columnDTO.getName())) {
              configsField.add("name = \"%s\"".formatted(nameSnakeCase));
         }

@@ -15,7 +15,8 @@
     Mais informações e documentação podem ser encontradas nesse <a href="https://github.com/viniciusbrigido/SpringRestCodeGenerator">repositório do GitHub</a>.<br>
   ]]></description>
 
-    <idea-version since-build="223.0"/>
+    <product-descriptor code="PSRCODEGEN" release-date="20230724" release-version="22211"/>
+    <idea-version since-build="221.5591.52" />
     <depends>com.intellij.modules.all</depends>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -24,7 +25,7 @@
 
     <actions>
 
-        <group id="com.brigido.springrestcodegenerator.dialog.CodeGeneratorGroup"
+        <group id="SpringRestCodeGenerator"
                text="Code Generator"
                description="Code generation actions"
                popup="true">
@@ -37,7 +38,7 @@
                 description="Generate code using the SpringRestCodeGenerator">
 
             <keyboard-shortcut first-keystroke="ctrl alt g" keymap="$default"/>
-            <add-to-group group-id="com.brigido.springrestcodegenerator.dialog.CodeGeneratorGroup"
+            <add-to-group group-id="SpringRestCodeGenerator"
                           anchor="first" />
         </action>
     </actions>
