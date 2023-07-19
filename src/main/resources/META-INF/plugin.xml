@@ -15,9 +15,12 @@
     Mais informações e documentação podem ser encontradas nesse <a href="https://github.com/viniciusbrigido/SpringRestCodeGenerator">repositório do GitHub</a>.<br>
   ]]></description>
 
-    <product-descriptor code="PSRCODEGEN" release-date="20230724" release-version="22211"/>
     <idea-version since-build="221.5591.52" />
+    <product-descriptor code="PSRCODEGEN" release-date="20230724" release-version="20231"/>
+    
+
     <depends>com.intellij.modules.all</depends>
+
 
     <extensions defaultExtensionNs="com.intellij">
 
