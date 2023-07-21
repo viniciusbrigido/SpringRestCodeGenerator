@@ -8,11 +8,11 @@
     </vendor>
 
     <description><![CDATA[
-    Plugin para gerar uma API Spring Rest de maneira mais fácil.<br>
-    Este plugin adiciona recursos de geração automática de código para facilitar o desenvolvimento de APIs RESTful usando o framework Spring.<br>
-    Ele fornece templates pré-definidos e suporte para personalização, permitindo que você gere rapidamente o código de estruturas básicas, como controladores, serviços e modelos.<br>
-    Para usar o plugin, acesse o menu "Ferramentas" e selecione "Gerar Código Spring REST".<br>
-    Mais informações e documentação podem ser encontradas nesse <a href="https://github.com/viniciusbrigido/SpringRestCodeGenerator">repositório do GitHub</a>.<br>
+        Plugin to generate a Spring Rest API in an easier way.<br>
+        This plugin adds automatic code generation capabilities to facilitate the development of RESTful APIs using the Spring framework.<br>
+        It provides pre-built templates and support for customization, allowing you to quickly generate code for basic frameworks such as controllers, services, and models.<br>
+        To use the plugin, access the "Tools" menu and select "Generate Spring REST Code".<br>
+        More information and documentation can be found in this <a href="https://github.com/viniciusbrigido/SpringRestCodeGenerator">GitHub repository</a>.<br>
   ]]></description>
 
     <idea-version since-build="221.5591.52" />
