@@ -3,9 +3,7 @@
 
     <name>Spring Rest Code Generator</name>
 
-    <vendor email="brigido.viniciuss@gmail.com" url="https://github.com/viniciusbrigido">
-        Brigido
-    </vendor>
+    <vendor email="brigido.viniciuss@gmail.com" url="https://github.com/viniciusbrigido">Brigido</vendor>
 
     <description><![CDATA[
         Plugin to generate a Spring Rest API in an easier way.<br>
