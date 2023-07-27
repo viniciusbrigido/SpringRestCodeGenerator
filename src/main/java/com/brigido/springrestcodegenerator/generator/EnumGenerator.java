@@ -32,7 +32,7 @@ public class EnumGenerator extends BaseGenerator {
 
     private String getEnumValues(List<String> values) {
         return "\t" + values.stream()
-                .map(line -> parseCamelCaseToSnakeCase(line.trim()).toUpperCase())
+                .map(line -> line.equals(line.toUpperCase()) ? line : parseCamelCaseToSnakeCase(line.trim()).toUpperCase())
                 .collect(joining(", "));
     }
 

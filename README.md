@@ -4,7 +4,7 @@ Este plugin é um gerador de código Java Spring que permite criar APIs REST de 
 ### Requisitos
 
 - Java 8+
-- Spring 3+ previamente configurado (`spring-boot-starter`, `spring-boot-starter-data-jdbc`, `spring-boot-starter-web`, `spring-boot-starter-data-jpa`, ...)
+- Spring 3+ previamente configurado (`spring-boot-starter`, `spring-boot-starter-data-jdbc`, `spring-boot-starter-web`, `spring-boot-starter-data-jpa`, `spring-boot-starter-validation`, ...)
 - biblioteca ModelMapper (`org.modelmapper`) no pom do projeto alvo
 
 
@@ -74,11 +74,11 @@ public class ColumnDTO {
     private String name;
     private String type;
     private Integer length;
-    private boolean primaryKey;
-    private boolean required;
-    private boolean updatable;
-    private boolean list;
-    private boolean unique;
+    private Boolean primaryKey;
+    private Boolean required;
+    private Boolean list;
+    private Boolean unique;
+    private Boolean updatable;
     private String generationType;
     private String cardinality;
 }
@@ -90,13 +90,15 @@ public class ColumnDTO {
 
 `type:` Tipo da coluna (deve ser o exato nome da propriedade/objeto, como String, Integer, Venda, etc.).
 
-`primaryKey (opcional):` Indica que a coluna será a chave primária da entidade.
+`primaryKey (opcional, default false):` Indica que a coluna será a chave primária da entidade.
 
-`required (opcional):` Indica que a coluna é obrigatória ao cadastrar. Será adicionada a anotação `@NotNull` no DTO de persistência para garantir que o usuário informe o valor.
+`required (opcional, default false):` Indica que a coluna é obrigatória ao cadastrar. Será adicionada a anotação `@NotNull` no DTO de persistência para garantir que o usuário informe o valor.
 
-`list (opcional):` Indica que a coluna será uma lista.
+`list (opcional, default false):` Indica que a coluna será uma lista.
 
-`updatable (opcional):` Indica que a coluna pode ser atualizada. Será criado um DTO específico para atualização. Caso nenhuma propriedade possa ser atualizada, o DTO e o método de atualização correspondente não serão gerados.
+`unique (opcional, default false):` Indica que a coluna terá a Constraint unique.
+
+`updatable (opcional, default true):` Indica que a coluna pode ser atualizada. Será criado um DTO específico para atualização. Caso nenhuma propriedade possa ser atualizada, o DTO e o método de atualização correspondente não serão gerados.
 
 `generationType (opcional, case insensitive):` Indica o tipo de geração da coluna que contém a anotação `@GeneratedValue`. Pode ser um dos seguintes valores: `OneToMany`, `ManyToOne`, `OneToOne`, `ManyToMany`.
 
@@ -163,8 +165,8 @@ Para utilizar o gerador, siga as etapas abaixo:
 - `Arquivo de Geração:` Arquivo que contém as entidades/enums a serem gerados seguindo a nomenclatura citada (`JSON`)
 - `Usar Lombok:` Determina se o projeto utiliza a biblioteca Lombok. Caso marcado, `getters`, `setters` e `construtores` das entidades e DTOs serão criados com `Lombok`
 - `Usar Serializable:` Determina se as entidades já iniciarão implementando a interface `Serializable`
-- `Package Entity (Opcional):` Permite ao usuário identificar o pacote de entidades com um nome diferente de `entity` (por exemplo, `model`).
-- `Package Controller (Opcional):` Permite ao usuário identificar o pacote de controladores com um nome diferente de `controller` (por exemplo, `resource`).
+- `Package Entity (opcional):` Permite ao usuário identificar o pacote de entidades com um nome diferente de `entity` (por exemplo, `model`).
+- `Package Controller (opcional):` Permite ao usuário identificar o pacote de controladores com um nome diferente de `controller` (por exemplo, `resource`).
 
 ### Observações
 

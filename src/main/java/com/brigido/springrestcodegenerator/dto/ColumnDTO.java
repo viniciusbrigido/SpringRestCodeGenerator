@@ -1,23 +1,25 @@
 package com.brigido.springrestcodegenerator.dto;
 
+import static java.util.Objects.*;
+
 public class ColumnDTO {
 
     private String name;
     private String type;
     private Integer length;
-    private boolean primaryKey;
-    private boolean required;
-    private boolean updatable;
-    private boolean list;
-    private boolean unique;
+    private Boolean primaryKey;
+    private Boolean required;
+    private Boolean updatable;
+    private Boolean list;
+    private Boolean unique;
     private String generationType;
     private String cardinality;
 
     public ColumnDTO() {
     }
 
-    public ColumnDTO(String name, String type, Integer length, boolean primaryKey, boolean required, boolean updatable,
-                     boolean list, boolean unique, String generationType, String cardinality) {
+    public ColumnDTO(String name, String type, Integer length, Boolean primaryKey, Boolean required, Boolean updatable,
+                     Boolean list, Boolean unique, String generationType, String cardinality) {
         this.name = name;
         this.type = type;
         this.length = length;
@@ -54,43 +56,43 @@ public class ColumnDTO {
         this.length = length;
     }
 
-    public boolean isPrimaryKey() {
-        return primaryKey;
+    public Boolean isPrimaryKey() {
+        return requireNonNullElse(primaryKey, false);
     }
 
-    public void setPrimaryKey(boolean primaryKey) {
+    public void setPrimaryKey(Boolean primaryKey) {
         this.primaryKey = primaryKey;
     }
 
-    public boolean isRequired() {
-        return required;
+    public Boolean isRequired() {
+        return requireNonNullElse(required, false);
     }
 
-    public void setRequired(boolean required) {
+    public void setRequired(Boolean required) {
         this.required = required;
     }
 
-    public boolean isUpdatable() {
-        return updatable;
+    public Boolean isUpdatable() {
+        return requireNonNullElse(updatable, true);
     }
 
-    public void setUpdatable(boolean updatable) {
+    public void setUpdatable(Boolean updatable) {
         this.updatable = updatable;
     }
 
-    public boolean isList() {
-        return list;
+    public Boolean isList() {
+        return requireNonNullElse(list, false);
     }
 
-    public void setList(boolean list) {
+    public void setList(Boolean list) {
         this.list = list;
     }
 
-    public boolean isUnique() {
-        return unique;
+    public Boolean isUnique() {
+        return requireNonNullElse(unique, false);
     }
 
-    public void setUnique(boolean unique) {
+    public void setUnique(Boolean unique) {
         this.unique = unique;
     }
 

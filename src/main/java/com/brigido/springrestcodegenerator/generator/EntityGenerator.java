@@ -8,7 +8,6 @@ import java.util.List;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
 import static java.lang.String.join;
 import static java.util.Objects.*;
-import static java.util.stream.Collectors.*;
 
 public class EntityGenerator extends BaseGenerator {
 
@@ -74,7 +73,7 @@ public class EntityGenerator extends BaseGenerator {
     private String getColumns(TableDTO tableDTO) {
         StringBuilder columns = new StringBuilder();
         for (ColumnDTO columnDTO : tableDTO.getColumns()) {
-            columns.append(getFieldCode(columnDTO)).append("\n");
+            columns.append(getFieldCode(columnDTO));
         }
         return columns.toString();
     }
@@ -92,7 +91,8 @@ public class EntityGenerator extends BaseGenerator {
 
         fieldCode.append(getCardinality(columnDTO))
                  .append(getColumnName(columnDTO))
-                 .append(propertyName);
+                 .append(propertyName)
+                 .append("\n");
 
         return fieldCode.toString();
     }
@@ -146,8 +146,9 @@ public class EntityGenerator extends BaseGenerator {
             return "";
         }
 
-        List<ColumnDTO> columns = tableDTO.getColumns()
-                .stream().filter(ColumnDTO::isUpdatable).collect(toList());
+        List<ColumnDTO> columns = tableDTO.getColumns().stream()
+                .filter(column -> column.isUpdatable() && isNull(column.getCardinality()) && !column.isPrimaryKey())
+                .toList();
 
         StringBuilder updateMethod = new StringBuilder();
         String objectNameLowerCase = lowerCaseFirstLetter(tableDTO.getTable());
@@ -159,7 +160,7 @@ public class EntityGenerator extends BaseGenerator {
             updateMethod.append("\t\t")
                         .append(columnDTO.getName())
                         .append(" = ofNullable(")
-                        .append(parseCamelCaseToSnakeCase(columnDTO.getName()))
+                        .append(parseCamelCaseToSnakeCase(objectNameLowerCase))
                         .append("UpdateDTO.get")
                         .append(capitalizeFirstLetter(columnDTO.getName()))
                         .append("()).orElse(").append(columnDTO.getName()).append(");\n");

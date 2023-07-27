@@ -76,16 +76,16 @@ public abstract class BaseGenerator {
     }
 
     public boolean checkImport(ConfigEntityDTO configEntityDTO, Imports importEnum) {
-        switch (importEnum) {
-            case DATE: return configEntityDTO.isContainsDate();
-            case UUID: return configEntityDTO.isContainsUUID();
-            case BIG_INTEGER: return configEntityDTO.isContainsBigInteger();
-            case BIG_DECIMAL: return configEntityDTO.isContainsBigDecimal();
-            case LOCAL_DATE: return configEntityDTO.isContainsLocalDate();
-            case LOCAL_DATE_TIME: return configEntityDTO.isContainsLocalDateTime();
-            case LIST: return configEntityDTO.isContainsList();
-            default: return false;
-        }
+        return switch (importEnum) {
+            case DATE -> configEntityDTO.isContainsDate();
+            case UUID -> configEntityDTO.isContainsUUID();
+            case BIG_INTEGER -> configEntityDTO.isContainsBigInteger();
+            case BIG_DECIMAL -> configEntityDTO.isContainsBigDecimal();
+            case LOCAL_DATE -> configEntityDTO.isContainsLocalDate();
+            case LOCAL_DATE_TIME -> configEntityDTO.isContainsLocalDateTime();
+            case LIST -> configEntityDTO.isContainsList();
+            default -> false;
+        };
     }
 
     public String getImportsIdLine(List<ColumnDTO> columns) {
@@ -129,7 +129,7 @@ public abstract class BaseGenerator {
         if (!propertyDTO.isUseLombok()) {
             return "";
         }
-        return "@Getter @Setter\n@AllArgsConstructor @NoArgsConstructor\n";
+        return "@Getter @Setter\n@AllArgsConstructor @NoArgsConstructor\n@Builder\n";
     }
 
     public String getLombokImport() {
@@ -196,10 +196,6 @@ public abstract class BaseGenerator {
                           .append("\t}\n\n");
         }
         return gettersSetters.toString();
-    }
-
-    public String[] getTokens(String line) {
-        return line.trim().split("\\s+");
     }
 
     public static String capitalizeFirstLetter(String value) {
