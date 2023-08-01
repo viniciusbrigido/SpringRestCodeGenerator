@@ -4,6 +4,7 @@ import com.brigido.springrestcodegenerator.dto.PropertyDTO;
 import com.brigido.springrestcodegenerator.dto.TableDTO;
 import java.io.IOException;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
+import static com.brigido.springrestcodegenerator.util.StringUtil.*;
 
 public class ServiceImplGenerator extends BaseGenerator {
 

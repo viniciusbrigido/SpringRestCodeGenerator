@@ -14,12 +14,13 @@ public class ColumnDTO {
     private Boolean unique;
     private String generationType;
     private String cardinality;
+    private String enumType;
 
     public ColumnDTO() {
     }
 
     public ColumnDTO(String name, String type, Integer length, Boolean primaryKey, Boolean required, Boolean updatable,
-                     Boolean list, Boolean unique, String generationType, String cardinality) {
+                     Boolean list, Boolean unique, String generationType, String cardinality, String enumType) {
         this.name = name;
         this.type = type;
         this.length = length;
@@ -30,6 +31,7 @@ public class ColumnDTO {
         this.unique = unique;
         this.generationType = generationType;
         this.cardinality = cardinality;
+        this.enumType = enumType;
     }
 
     public String getName() {
@@ -110,5 +112,13 @@ public class ColumnDTO {
 
     public void setCardinality(String cardinality) {
         this.cardinality = cardinality;
+    }
+
+    public String getEnumType() {
+        return enumType;
+    }
+
+    public void setEnumType(String enumType) {
+        this.enumType = enumType;
     }
 }

@@ -5,7 +5,6 @@ import com.brigido.springrestcodegenerator.generator.BaseGenerator;
 import java.io.IOException;
 import java.util.List;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.LIST;
-import static java.lang.String.format;
 import static java.util.Objects.*;
 
 public class ResponseDTOGenerator extends BaseGenerator {

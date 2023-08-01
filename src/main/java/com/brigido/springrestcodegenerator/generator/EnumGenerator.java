@@ -4,6 +4,7 @@ import com.brigido.springrestcodegenerator.dto.EnumDTO;
 import com.brigido.springrestcodegenerator.dto.PropertyDTO;
 import java.io.IOException;
 import java.util.List;
+import static com.brigido.springrestcodegenerator.util.StringUtil.*;
 import static java.util.stream.Collectors.*;
 
 public class EnumGenerator extends BaseGenerator {

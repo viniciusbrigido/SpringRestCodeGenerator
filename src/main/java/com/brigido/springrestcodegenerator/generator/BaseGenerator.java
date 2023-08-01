@@ -5,6 +5,7 @@ import com.brigido.springrestcodegenerator.enumeration.Imports;
 import java.io.*;
 import java.util.*;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
+import static com.brigido.springrestcodegenerator.util.StringUtil.*;
 import static java.lang.Character.*;
 import static java.lang.String.*;
 import static java.util.Arrays.*;
@@ -45,22 +46,6 @@ public abstract class BaseGenerator {
 
     public String getPackageName(String directory) {
         return "package %s;\n\n".formatted(convertDirectoryToPackage(directory));
-    }
-
-    public String parseCamelCaseToSnakeCase(String input) {
-        StringBuilder output = new StringBuilder();
-        for (int i = 0; i < input.length(); i++) {
-            char currentChar = input.charAt(i);
-            if (isUpperCase(currentChar)) {
-                if (i > 0) {
-                    output.append('_');
-                }
-                output.append(toLowerCase(currentChar));
-            } else {
-                output.append(currentChar);
-            }
-        }
-        return output.toString();
     }
 
     public String getImportsByConfigEntityDTO(List<ColumnDTO> columns) {
@@ -153,14 +138,14 @@ public abstract class BaseGenerator {
         return SERIALIZABLE.getFormattedImport();
     }
 
-    public String getConstructors(TableDTO tableDTO, String sufix) {
+    public String getConstructors(TableDTO tableDTO, String suffix) {
         if (propertyDTO.isUseLombok()) {
             return "";
         }
 
         StringBuilder constructors = new StringBuilder();
 
-        String emptyConstructor = "\tpublic %s%s() {\n\t}\n\n".formatted(tableDTO.getTable(), sufix);
+        String emptyConstructor = "\tpublic %s%s() {\n\t}\n\n".formatted(tableDTO.getTable(), suffix);
         constructors.append(emptyConstructor);
 
         List<String> properties = new ArrayList<>();
@@ -196,16 +181,6 @@ public abstract class BaseGenerator {
                           .append("\t}\n\n");
         }
         return gettersSetters.toString();
-    }
-
-    public static String capitalizeFirstLetter(String value) {
-        char firstChar = toUpperCase(value.charAt(0));
-        return firstChar + value.substring(1);
-    }
-
-    public static String lowerCaseFirstLetter(String value) {
-        char firstChar = toLowerCase(value.charAt(0));
-        return firstChar + value.substring(1);
     }
 
     public String getControllerName() {

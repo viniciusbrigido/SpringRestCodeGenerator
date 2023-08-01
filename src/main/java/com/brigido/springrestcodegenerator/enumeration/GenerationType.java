@@ -3,6 +3,7 @@ package com.brigido.springrestcodegenerator.enumeration;
 import static java.util.Arrays.stream;
 
 public enum GenerationType {
+
     TABLE, SEQUENCE, IDENTITY, UUID, AUTO;
 
     public static String getAnottation(String generationTypeString) {

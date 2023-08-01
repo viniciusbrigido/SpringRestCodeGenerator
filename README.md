@@ -81,6 +81,7 @@ public class ColumnDTO {
     private Boolean updatable;
     private String generationType;
     private String cardinality;
+    private String enumType;
 }
 ```
 
@@ -100,10 +101,11 @@ public class ColumnDTO {
 
 `updatable (opcional, default true):` Indica que a coluna pode ser atualizada. Será criado um DTO específico para atualização. Caso nenhuma propriedade possa ser atualizada, o DTO e o método de atualização correspondente não serão gerados.
 
-`generationType (opcional, case insensitive):` Indica o tipo de geração da coluna que contém a anotação `@GeneratedValue`. Pode ser um dos seguintes valores: `OneToMany`, `ManyToOne`, `OneToOne`, `ManyToMany`.
+`generationType (opcional, case insensitive):` Indica o tipo de geração da coluna que contém a anotação `@GeneratedValue`. Pode ser um dos seguintes valores: `OneToMany`, `ManyToOne`, `OneToOne` ou `ManyToMany`.
 
-`cardinality (opcional, case insensitive):` Indica o tipo de cardinalidade da coluna. Pode ser um dos seguintes valores: `Table`, `Sequence`, `Identity`, `UUID`, `Auto`.
+`cardinality (opcional, case insensitive):` Indica o tipo de cardinalidade da coluna. Pode ser um dos seguintes valores: `Table`, `Sequence`, `Identity`, `UUID` ou `Auto`.
 
+`enumType (opcional, case insensitive, default STRING):` Indica a forma que a coluna de enum será persistida. Pode ser um dos seguintes valores: `String` ou `Ordinal`.
 
 #### Aqui está um exemplo de definição de entidade:
 

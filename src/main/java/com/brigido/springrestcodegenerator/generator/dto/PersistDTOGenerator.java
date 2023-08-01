@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
+import static com.brigido.springrestcodegenerator.util.StringUtil.*;
 import static java.util.Arrays.stream;
 import static java.util.Objects.*;
 

@@ -5,6 +5,7 @@ import com.brigido.springrestcodegenerator.enumeration.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import static com.brigido.springrestcodegenerator.util.StringUtil.*;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
 import static java.lang.String.join;
 import static java.util.Objects.*;
@@ -29,7 +30,7 @@ public class EntityGenerator extends BaseGenerator {
             .append(getImports(tableDTO, enums))
             .append(getHeader(tableDTO))
             .append(className)
-            .append(getColumns(tableDTO))
+            .append(getColumns(tableDTO, enums))
             .append(getConstructors(tableDTO, ""))
             .append(getGettersSetters(tableDTO))
             .append(getUpdateMethod(tableDTO))
@@ -63,27 +64,31 @@ public class EntityGenerator extends BaseGenerator {
         StringBuilder header = new StringBuilder();
         header.append(getLombokHeader())
               .append("@Entity\n")
-              .append("@Table(name = \"")
-              .append(parseCamelCaseToSnakeCase(tableDTO.getTable()))
-              .append("\")\n");
+              .append("@Table(name = \"%s\")\n".formatted(parseCamelCaseToSnakeCase(tableDTO.getTable())));
 
         return header.toString();
     }
 
-    private String getColumns(TableDTO tableDTO) {
+    private String getColumns(TableDTO tableDTO, List<String> enums) {
         StringBuilder columns = new StringBuilder();
         for (ColumnDTO columnDTO : tableDTO.getColumns()) {
-            columns.append(getFieldCode(columnDTO));
+            columns.append(getFieldCode(columnDTO, enums));
         }
         return columns.toString();
     }
 
-    private String getFieldCode(ColumnDTO columnDTO) {
+    private String getFieldCode(ColumnDTO columnDTO, List<String> enums) {
         StringBuilder fieldCode = new StringBuilder();
 
         if (columnDTO.isPrimaryKey()) {
             fieldCode.append("\t@Id\n")
                      .append(getGeneratedValue(columnDTO));
+        }
+
+        if (nonNull(columnDTO.getEnumType())) {
+            fieldCode.append("\t@Enumerated(EnumType.%s)\n".formatted(columnDTO.getEnumType().toUpperCase()));
+        } else if (enums.contains(columnDTO.getType())) {
+            fieldCode.append("\t@Enumerated(EnumType.STRING)\n");
         }
 
         String typeFormatted = columnDTO.isList() ? "List<%s>".formatted(columnDTO.getType()) : columnDTO.getType();
@@ -110,7 +115,7 @@ public class EntityGenerator extends BaseGenerator {
         if (columnDTO.isRequired()) {
             configsField.add("nullable = false");
         }
-        if (columnDTO.getType().equals("String") && nonNull(columnDTO.getLength())) {
+        if (nonNull(columnDTO.getLength())) {
             configsField.add("length = %s".formatted(columnDTO.getLength()));
         }
         if (columnDTO.isUnique()) {

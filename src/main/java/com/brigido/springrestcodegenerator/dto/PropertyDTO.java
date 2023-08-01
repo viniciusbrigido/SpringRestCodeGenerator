@@ -56,4 +56,8 @@ public class PropertyDTO {
     public void setUseSerializable(boolean useSerializable) {
         this.useSerializable = useSerializable;
     }
+
+    public String getEntitySuffix() {
+        return packageEntity.toLowerCase();
+    }
 }

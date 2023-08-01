@@ -1,7 +1,6 @@
 package com.brigido.springrestcodegenerator.dto;
 
 import java.util.List;
-import java.util.Optional;
 import static java.util.stream.Collectors.*;
 
 public class TableDTO {
@@ -42,7 +41,7 @@ public class TableDTO {
     }
 
     public boolean hasEnum(List<String> enums) {
-        List<String> types = columns.stream().map(ColumnDTO::getType).collect(toList());
+        List<String> types = columns.stream().map(ColumnDTO::getType).toList();
         return types.stream()
                 .anyMatch(enums::contains);
     }
@@ -56,10 +55,10 @@ public class TableDTO {
     }
 
     public String getIdType() {
-        Optional<ColumnDTO> columnIdOptional = columns.stream().filter(ColumnDTO::isPrimaryKey).findFirst();
-        if (columnIdOptional.isPresent()) {
-            return columnIdOptional.get().getType();
-        }
-        return "";
+        return columns.stream()
+                .filter(ColumnDTO::isPrimaryKey)
+                .map(ColumnDTO::getType)
+                .findFirst()
+                .orElse("");
     }
 }
