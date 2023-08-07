@@ -54,7 +54,7 @@ public class PersistDTOGenerator extends BaseGenerator {
 
         String required = columnDTO.isRequired() ? "\t@NotNull\n" : "";
 
-        if (nonNull(columnDTO.getCardinality())) {
+        if (columnDTO.hasCardinality()) {
             AtomicReference<String> fieldCode = new AtomicReference<>("");
             entitiesId.forEach((table, primaryKey) -> {
                 if (table.equals(columnDTO.getType())) {

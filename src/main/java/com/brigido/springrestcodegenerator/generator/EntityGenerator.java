@@ -106,7 +106,7 @@ public class EntityGenerator extends BaseGenerator {
         List<String> configsField = new ArrayList<>();
         String nameSnakeCase = parseCamelCaseToSnakeCase(columnDTO.getName());
 
-        if (nonNull(columnDTO.getCardinality()) && !columnDTO.isList()) {
+        if (columnDTO.hasCardinality() && !columnDTO.isList()) {
             configsField.add("name = \"%s_id\"".formatted(nameSnakeCase));
         } else if (!nameSnakeCase.equals(columnDTO.getName())) {
              configsField.add("name = \"%s\"".formatted(nameSnakeCase));
@@ -126,12 +126,12 @@ public class EntityGenerator extends BaseGenerator {
             return "";
         }
 
-        String joinColumn = nonNull(columnDTO.getCardinality()) ? "Join" : "";
+        String joinColumn = columnDTO.hasCardinality() ? "Join" : "";
         return "\t@%sColumn(%s)\n".formatted(joinColumn, join(", ", configsField));
     }
 
     private String getCardinality(ColumnDTO columnDTO) {
-        if (isNull(columnDTO.getCardinality()) || columnDTO.getCardinality().isEmpty()) {
+        if (!columnDTO.hasCardinality()) {
             return "";
         }
 
@@ -139,10 +139,9 @@ public class EntityGenerator extends BaseGenerator {
     }
 
     private String getGeneratedValue(ColumnDTO columnDTO) {
-        if (isNull(columnDTO.getGenerationType()) || columnDTO.getGenerationType().isEmpty()) {
+        if (!columnDTO.hasGenerationType()) {
             return "\t@GeneratedValue\n";
         }
-
         return GenerationType.getAnottation(columnDTO.getGenerationType());
     }
 
@@ -152,7 +151,7 @@ public class EntityGenerator extends BaseGenerator {
         }
 
         List<ColumnDTO> columns = tableDTO.getColumns().stream()
-                .filter(column -> column.isUpdatable() && isNull(column.getCardinality()) && !column.isPrimaryKey())
+                .filter(column -> column.isUpdatable() && !column.hasCardinality() && !column.isPrimaryKey())
                 .toList();
 
         StringBuilder updateMethod = new StringBuilder();

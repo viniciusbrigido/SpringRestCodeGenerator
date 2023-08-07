@@ -121,4 +121,12 @@ public class ColumnDTO {
     public void setEnumType(String enumType) {
         this.enumType = enumType;
     }
+
+    public boolean hasCardinality() {
+        return nonNull(cardinality) && cardinality.isEmpty();
+    }
+
+    public boolean hasGenerationType() {
+        return nonNull(generationType) && generationType.isEmpty();
+    }
 }

@@ -45,7 +45,7 @@ public class ResponseDTOGenerator extends BaseGenerator {
 
     private String getFieldCode(ColumnDTO columnDTO) {
         StringBuilder fieldCode = new StringBuilder();
-        if (nonNull(columnDTO.getCardinality())) {
+        if (columnDTO.hasCardinality()) {
             return "";
         }
 

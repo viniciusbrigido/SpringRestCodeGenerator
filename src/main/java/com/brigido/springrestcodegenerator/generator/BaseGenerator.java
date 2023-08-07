@@ -6,7 +6,6 @@ import java.io.*;
 import java.util.*;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
 import static com.brigido.springrestcodegenerator.util.StringUtil.*;
-import static java.lang.Character.*;
 import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;

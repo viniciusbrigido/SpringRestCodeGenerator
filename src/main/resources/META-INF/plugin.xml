@@ -2,7 +2,6 @@
     <id>com.brigido.springrestcodegenerator</id>
 
     <name>Spring Rest Code Generator</name>
-
     <vendor email="brigido.viniciuss@gmail.com" url="https://github.com/viniciusbrigido">Brigido</vendor>
 
     <description><![CDATA[
@@ -15,13 +14,10 @@
 
     <idea-version since-build="221.5591.52" />
     <product-descriptor code="PSRCODEGEN" release-date="20230724" release-version="20231"/>
-    
 
     <depends>com.intellij.modules.all</depends>
 
-
     <extensions defaultExtensionNs="com.intellij">
-
     </extensions>
 
     <actions>

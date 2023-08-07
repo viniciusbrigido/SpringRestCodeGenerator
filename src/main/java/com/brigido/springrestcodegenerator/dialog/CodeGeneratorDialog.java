@@ -2,6 +2,7 @@ package com.brigido.springrestcodegenerator.dialog;
 
 import com.brigido.springrestcodegenerator.config.CodeGeneratorSettings;
 import com.brigido.springrestcodegenerator.dto.PropertyDTO;
+import com.brigido.springrestcodegenerator.exception.SyntaxErrorException;
 import com.brigido.springrestcodegenerator.generator.Generator;
 import com.intellij.openapi.fileChooser.*;
 import com.intellij.openapi.ui.*;
@@ -143,7 +144,7 @@ public class CodeGeneratorDialog extends DialogWrapper {
         new CodeGeneratorSettings().setPropertyDTO(getPropertyDTO());
         try {
             new Generator().generate(getPropertyDTO());
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | SyntaxErrorException e) {
             Messages.showMessageDialog(e.getMessage(), TITLE, Messages.getErrorIcon());
             return;
         } catch (Exception e) {
