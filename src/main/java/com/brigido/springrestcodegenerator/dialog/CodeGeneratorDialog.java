@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.io.FileNotFoundException;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import static java.util.Objects.*;
 
 public class CodeGeneratorDialog extends DialogWrapper {
@@ -155,6 +156,7 @@ public class CodeGeneratorDialog extends DialogWrapper {
         super.doOKAction();
 
         Messages.showMessageDialog("Código gerado!", TITLE, Messages.getInformationIcon());
+        reloadFiles();
     }
 
     private PropertyDTO getPropertyDTO() {
@@ -194,5 +196,13 @@ public class CodeGeneratorDialog extends DialogWrapper {
 
         packageEntity.setText(propertyDTO.getPackageEntity());
         packageController.setText(propertyDTO.getPackageController());
+    }
+
+    private void reloadFiles() {
+        try {
+            LocalFileSystem.getInstance().refresh(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
