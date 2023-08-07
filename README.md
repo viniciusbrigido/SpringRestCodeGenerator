@@ -91,6 +91,8 @@ public class ColumnDTO {
 
 `type:` Tipo da coluna (deve ser o exato nome da propriedade/objeto, como String, Integer, Venda, etc.).
 
+`length (opcional, default 255):` Indica comprimento da coluna (Somente se a coluna for do tipo String).
+
 `primaryKey (opcional, default false):` Indica que a coluna será a chave primária da entidade.
 
 `required (opcional, default false):` Indica que a coluna é obrigatória ao cadastrar. Será adicionada a anotação `@NotNull` no DTO de persistência para garantir que o usuário informe o valor.
@@ -163,10 +165,10 @@ Para utilizar o gerador, siga as etapas abaixo:
 3 - Faça as personalizações adicionais necessárias para atender aos requisitos específicos do seu projeto e clique em `Gerar`.
 
 4- Uma breve explicação dos campos:
-- `Pasta Principal do Projeto:` Pasta onde os arquivos e pastas serão criados (Pasta em que contém o arquivo com o método `main`)
-- `Arquivo de Geração:` Arquivo que contém as entidades/enums a serem gerados seguindo a nomenclatura citada (`JSON`)
-- `Usar Lombok:` Determina se o projeto utiliza a biblioteca Lombok. Caso marcado, `getters`, `setters` e `construtores` das entidades e DTOs serão criados com `Lombok`
-- `Usar Serializable:` Determina se as entidades já iniciarão implementando a interface `Serializable`
+- `Pasta Principal do Projeto:` Pasta onde os arquivos e pastas serão criados (Pasta em que contém o arquivo com o método `main`).
+- `Arquivo de Geração:` Arquivo que contém as entidades/enums a serem gerados seguindo a nomenclatura citada (`JSON`).
+- `Usar Lombok:` Determina se o projeto utiliza a biblioteca Lombok. Caso marcado, `getters`, `setters` e `construtores` das entidades e DTOs serão criados com `Lombok`.
+- `Usar Serializable:` Determina se as entidades já iniciarão implementando a interface `Serializable`.
 - `Package Entity (opcional):` Permite ao usuário identificar o pacote de entidades com um nome diferente de `entity` (por exemplo, `model`).
 - `Package Controller (opcional):` Permite ao usuário identificar o pacote de controladores com um nome diferente de `controller` (por exemplo, `resource`).
 
@@ -177,3 +179,5 @@ Para utilizar o gerador, siga as etapas abaixo:
 - Após a geração do código, faça as devidas personalizações para atender aos requisitos específicos do seu projeto.
 
 - É recomendável revisar e testar o código gerado para garantir que tudo esteja funcionando corretamente.
+
+- Caso seja definido no JSON uma entidade que já existe no código ela, será apagada e gerada novamente. 
