@@ -90,13 +90,11 @@ public class PersistDTOGenerator extends BaseGenerator {
         StringBuilder externalImports = new StringBuilder();
         List<String> imports = new ArrayList<>();
 
-        entitiesId.forEach((table, primaryKey) -> {
-            tableDTO.getColumns().forEach(columnDTO -> {
-                if (table.equals(columnDTO.getType())) {
-                    imports.add(primaryKey);
-                }
-            });
-        });
+        entitiesId.forEach((table, primaryKey) -> tableDTO.getColumns().forEach(columnDTO -> {
+            if (table.equals(columnDTO.getType())) {
+                imports.add(primaryKey);
+            }
+        }));
         List<String> distinctImports = new ArrayList<>(new HashSet<>(imports));
         ConfigEntityDTO configEntityDTO = getConfigEntityDTOFromExternalImports(distinctImports);
 

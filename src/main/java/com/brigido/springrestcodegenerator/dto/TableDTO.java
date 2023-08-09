@@ -37,7 +37,9 @@ public class TableDTO {
     }
 
     public List<ColumnDTO> getColumnsUpdate() {
-        return columns.stream().filter(columnDTO -> columnDTO.isUpdatable() || columnDTO.isPrimaryKey()).collect(toList());
+        return columns.stream()
+                .filter(columnDTO -> (columnDTO.isUpdatable() || columnDTO.isPrimaryKey()) && !columnDTO.hasCardinality())
+                .collect(toList());
     }
 
     public boolean hasEnum(List<String> enums) {
@@ -47,7 +49,8 @@ public class TableDTO {
     }
 
     public boolean hasUpdate() {
-        return columns.stream().anyMatch(ColumnDTO::isUpdatable);
+        return columns.stream()
+                .anyMatch(column -> column.isUpdatable() && !column.hasCardinality() && !column.isPrimaryKey());
     }
 
     public boolean hasRequired() {

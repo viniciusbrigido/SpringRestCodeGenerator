@@ -1,6 +1,9 @@
 package com.brigido.springrestcodegenerator.enumeration;
 
+import java.util.List;
+import static java.lang.String.join;
 import static java.util.Arrays.*;
+import static java.util.Objects.*;
 
 public enum Cardinality {
 
@@ -19,11 +22,12 @@ public enum Cardinality {
         return name;
     }
 
-    public static String getAnottation(String cardinalityString) {
-        return stream(Cardinality.values())
+    public static String getAnottation(String cardinalityString, List<String> configsCardinality) {
+        return stream(values())
                 .filter(cardinality -> cardinality.getName().equalsIgnoreCase(cardinalityString))
                 .findFirst()
-                .map(cardinality -> "\t@%s\n".formatted(cardinality.getName()))
+                .map(cardinality -> "\t@%s%s\n"
+                        .formatted(cardinality.getName(), isNull(configsCardinality) || configsCardinality.isEmpty() ? "" :  "(%s)".formatted(join(", ", configsCardinality))))
                 .orElse("");
     }
 }

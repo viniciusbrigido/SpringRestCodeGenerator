@@ -85,7 +85,7 @@ public class EntityGenerator extends BaseGenerator {
                      .append(getGeneratedValue(columnDTO));
         }
 
-        if (nonNull(columnDTO.getEnumType())) {
+        if (columnDTO.hasEnumType()) {
             fieldCode.append("\t@Enumerated(EnumType.%s)\n".formatted(columnDTO.getEnumType().toUpperCase()));
         } else if (enums.contains(columnDTO.getType())) {
             fieldCode.append("\t@Enumerated(EnumType.STRING)\n");
@@ -108,7 +108,7 @@ public class EntityGenerator extends BaseGenerator {
 
         if (columnDTO.hasCardinality() && !columnDTO.isList()) {
             configsField.add("name = \"%s_id\"".formatted(nameSnakeCase));
-        } else if (!nameSnakeCase.equals(columnDTO.getName())) {
+        } else if (!columnDTO.hasCardinality() && !nameSnakeCase.equals(columnDTO.getName())) {
              configsField.add("name = \"%s\"".formatted(nameSnakeCase));
         }
 
@@ -134,8 +134,12 @@ public class EntityGenerator extends BaseGenerator {
         if (!columnDTO.hasCardinality()) {
             return "";
         }
+        List<String> configsCardinality = new ArrayList<>();
+        if (columnDTO.hasMappedBy()) {
+            configsCardinality.add("mappedBy = \"%s\"".formatted(columnDTO.getMappedBy()));
+        }
 
-        return Cardinality.getAnottation(columnDTO.getCardinality());
+        return Cardinality.getAnottation(columnDTO.getCardinality(), configsCardinality);
     }
 
     private String getGeneratedValue(ColumnDTO columnDTO) {
@@ -164,7 +168,7 @@ public class EntityGenerator extends BaseGenerator {
             updateMethod.append("\t\t")
                         .append(columnDTO.getName())
                         .append(" = ofNullable(")
-                        .append(parseCamelCaseToSnakeCase(objectNameLowerCase))
+                        .append(lowerCaseFirstLetter(objectNameLowerCase))
                         .append("UpdateDTO.get")
                         .append(capitalizeFirstLetter(columnDTO.getName()))
                         .append("()).orElse(").append(columnDTO.getName()).append(");\n");

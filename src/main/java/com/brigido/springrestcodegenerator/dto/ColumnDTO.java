@@ -15,12 +15,13 @@ public class ColumnDTO {
     private String generationType;
     private String cardinality;
     private String enumType;
+    private String mappedBy;
 
     public ColumnDTO() {
     }
 
     public ColumnDTO(String name, String type, Integer length, Boolean primaryKey, Boolean required, Boolean updatable,
-                     Boolean list, Boolean unique, String generationType, String cardinality, String enumType) {
+                     Boolean list, Boolean unique, String generationType, String cardinality, String enumType, String mappedBy) {
         this.name = name;
         this.type = type;
         this.length = length;
@@ -32,6 +33,7 @@ public class ColumnDTO {
         this.generationType = generationType;
         this.cardinality = cardinality;
         this.enumType = enumType;
+        this.mappedBy = mappedBy;
     }
 
     public String getName() {
@@ -122,11 +124,27 @@ public class ColumnDTO {
         this.enumType = enumType;
     }
 
+    public String getMappedBy() {
+        return mappedBy;
+    }
+
+    public void setMappedBy(String mappedBy) {
+        this.mappedBy = mappedBy;
+    }
+
     public boolean hasCardinality() {
-        return nonNull(cardinality) && cardinality.isEmpty();
+        return nonNull(cardinality) && !cardinality.isEmpty();
     }
 
     public boolean hasGenerationType() {
-        return nonNull(generationType) && generationType.isEmpty();
+        return nonNull(generationType) && !generationType.isEmpty();
+    }
+
+    public boolean hasEnumType() {
+        return nonNull(enumType) && !enumType.isEmpty();
+    }
+
+    public boolean hasMappedBy() {
+        return nonNull(mappedBy) && !mappedBy.isEmpty();
     }
 }

@@ -82,6 +82,7 @@ public class ColumnDTO {
     private String generationType;
     private String cardinality;
     private String enumType;
+    private String mappedBy;
 }
 ```
 
@@ -103,11 +104,13 @@ public class ColumnDTO {
 
 `updatable (opcional, default true):` Indica que a coluna pode ser atualizada. Será criado um DTO específico para atualização. Caso nenhuma propriedade possa ser atualizada, o DTO e o método de atualização correspondente não serão gerados.
 
-`generationType (opcional, case insensitive):` Indica o tipo de geração da coluna que contém a anotação `@GeneratedValue`. Pode ser um dos seguintes valores: `OneToMany`, `ManyToOne`, `OneToOne` ou `ManyToMany`.
+`cardinality (opcional, case insensitive):` Indica o tipo de cardinalidade da coluna. Pode ser um dos seguintes valores: `OneToMany`, `ManyToOne`, `OneToOne` ou `ManyToMany`.
 
-`cardinality (opcional, case insensitive):` Indica o tipo de cardinalidade da coluna. Pode ser um dos seguintes valores: `Table`, `Sequence`, `Identity`, `UUID` ou `Auto`.
+`generationType (opcional, case insensitive):` Indica o tipo de geração da coluna que contém a anotação `@GeneratedValue`. Pode ser um dos seguintes valores: `Table`, `Sequence`, `Identity`, `UUID` ou `Auto`.
 
 `enumType (opcional, case insensitive, default STRING):` Indica a forma que a coluna de enum será persistida. Pode ser um dos seguintes valores: `String` ou `Ordinal`.
+
+`mappedBy (opcional, case sensitive):` Usado em relacionamentos bidirecionais no JPA. Serve para indicar que o controle do relacionamento está no lado oposto da associação.
 
 #### Aqui está um exemplo de definição de entidade:
 

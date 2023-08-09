@@ -81,7 +81,7 @@ public class Generator {
                     throw new SyntaxErrorException("A coluna %s da entidade %s não possui tipo."
                             .formatted(columnDTO.getName(), tableDTO.getTable()));
                 }
-                if (columnDTO.hasCardinality() && Cardinality.getAnottation(columnDTO.getCardinality()).isEmpty()) {
+                if (columnDTO.hasCardinality() && Cardinality.getAnottation(columnDTO.getCardinality(), null).isEmpty()) {
                     throw new SyntaxErrorException("A cardinalidade da coluna %s da entidade %s é inválido."
                             .formatted(columnDTO.getName(), tableDTO.getTable()));
                 }
