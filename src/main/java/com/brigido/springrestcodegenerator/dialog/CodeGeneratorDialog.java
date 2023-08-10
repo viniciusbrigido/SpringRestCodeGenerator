@@ -25,9 +25,6 @@ public class CodeGeneratorDialog extends DialogWrapper {
     private JBCheckBox cbUseLombok;
     private JBCheckBox cbUseSerializable;
 
-    private JBTextField packageEntity;
-    private JBTextField packageController;
-
     private PropertyDTO propertyDTO;
 
     protected CodeGeneratorDialog() {
@@ -96,32 +93,7 @@ public class CodeGeneratorDialog extends DialogWrapper {
         cbUseSerializable = new JBCheckBox("Usar Serializable");
         checkboxPanel.add(cbUseLombok);
         checkboxPanel.add(cbUseSerializable);
-
         panel.add(checkboxPanel, gbc);
-
-        JPanel additionalFieldsPanel = new JPanel(new GridBagLayout());
-
-        GridBagConstraints additionalFieldsGbc = new GridBagConstraints();
-        additionalFieldsGbc.gridx = 0;
-        additionalFieldsGbc.gridy = 0;
-        additionalFieldsGbc.weightx = 0.5;
-        additionalFieldsGbc.fill = GridBagConstraints.HORIZONTAL;
-        additionalFieldsGbc.insets = JBUI.insets(5);
-
-        packageEntity = new JBTextField();
-        additionalFieldsPanel.add(new JLabel("Package Entity:"), additionalFieldsGbc);
-        additionalFieldsGbc.gridx++;
-        additionalFieldsPanel.add(packageEntity, additionalFieldsGbc);
-
-        packageController = new JBTextField();
-        additionalFieldsGbc.gridx = 0;
-        additionalFieldsGbc.gridy++;
-        additionalFieldsPanel.add(new JLabel("Package Controller:"), additionalFieldsGbc);
-        additionalFieldsGbc.gridx++;
-        additionalFieldsPanel.add(packageController, additionalFieldsGbc);
-
-        gbc.gridy++;
-        panel.add(additionalFieldsPanel, gbc);
 
         gbc.gridy++;
         JButton extraSettingsButton = new JButton("Configurações Extras");
@@ -175,9 +147,6 @@ public class CodeGeneratorDialog extends DialogWrapper {
         propertyDTO.setUrlProject(urlProject.getText());
         propertyDTO.setPathClass(pathClass.getText());
 
-        propertyDTO.setPackageEntity(getPackageName(packageEntity, "entity"));
-        propertyDTO.setPackageController(getPackageName(packageController, "controller"));
-
         return propertyDTO;
     }
 
@@ -198,9 +167,6 @@ public class CodeGeneratorDialog extends DialogWrapper {
 
         urlProject.setText(propertyDTO.getUrlProject());
         pathClass.setText(propertyDTO.getPathClass());
-
-        packageEntity.setText(propertyDTO.getPackageEntity());
-        packageController.setText(propertyDTO.getPackageController());
     }
 
     private void reloadFiles() {
@@ -229,5 +195,9 @@ public class CodeGeneratorDialog extends DialogWrapper {
         getPropertyDTO().setUpdateDTOPath(propertyDTOExtraSettings.getUpdateDTOPath());
         getPropertyDTO().setResponseDTOSuffix(propertyDTOExtraSettings.getResponseDTOSuffix());
         getPropertyDTO().setResponseDTOPath(propertyDTOExtraSettings.getResponseDTOPath());
+        getPropertyDTO().setControllerSuffix(propertyDTOExtraSettings.getControllerSuffix());
+        getPropertyDTO().setControllerPath(propertyDTOExtraSettings.getControllerPath());
+        getPropertyDTO().setEntitySuffix(propertyDTOExtraSettings.getEntitySuffix());
+        getPropertyDTO().setEntityPath(propertyDTOExtraSettings.getEntityPath());
     }
 }

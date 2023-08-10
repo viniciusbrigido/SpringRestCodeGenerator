@@ -15,7 +15,7 @@ public class RepositoryGenerator extends BaseGenerator {
         this.tableDTO = tableDTO;
 
         String fileName = tableDTO.getTable() + propertyDTO.getRepositorySuffix() + ".java";
-        createFile(getRepositoryDirectory(propertyDTO.getUrlProject()), fileName, getRepositoryCode());
+        createFile(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getRepositoryPath()), fileName, getRepositoryCode());
     }
 
     private String getRepositoryCode() {
@@ -23,7 +23,7 @@ public class RepositoryGenerator extends BaseGenerator {
         String interfaceName = "public interface %s%s extends JpaRepository<%s, %s> {\n}".formatted(
                 tableDTO.getTable(), propertyDTO.getRepositorySuffix(), tableDTO.getTable(), tableDTO.getIdType());
 
-        code.append(getPackageName(getRepositoryDirectory(propertyDTO.getUrlProject())))
+        code.append(getPackageName(propertyDTO.getUrlProject(), propertyDTO.getRepositoryPath()))
             .append(getImports(tableDTO))
             .append("\n")
             .append("@Repository\n")
@@ -38,7 +38,7 @@ public class RepositoryGenerator extends BaseGenerator {
                .append(JPA_REPOSITORY.getFormattedImport())
                .append(REPOSITORY.getFormattedImport())
                .append("import ")
-               .append(convertDirectoryToPackage(getEntityDirectory(propertyDTO.getUrlProject(), propertyDTO.getPackageEntity())))
+               .append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getEntityPath())))
                .append(".").append(tableDTO.getTable()).append(";\n");
         return imports.toString();
     }

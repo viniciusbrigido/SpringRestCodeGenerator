@@ -20,7 +20,7 @@ public class EntityGenerator extends BaseGenerator {
         this.tableDTO = tableDTO;
 
         String fileName = tableDTO.getTable() + ".java";
-        createFile(getEntityDirectory(propertyDTO.getUrlProject(), propertyDTO.getPackageEntity()), fileName, getEntityCode(enums));
+        createFile(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getEntityPath()), fileName, getEntityCode(enums));
     }
 
     private String getEntityCode(List<String> enums) {
@@ -28,7 +28,7 @@ public class EntityGenerator extends BaseGenerator {
         String className = "public class %s %s{\n\n"
                 .formatted(tableDTO.getTable(), getSerializableImplements(propertyDTO.isUseSerializable()));
 
-        code.append(getPackageName(getEntityDirectory(propertyDTO.getUrlProject(), propertyDTO.getPackageEntity())))
+        code.append(getPackageName(propertyDTO.getUrlProject(), propertyDTO.getEntityPath()))
             .append(getImports(enums))
             .append(getHeader())
             .append(className)
@@ -48,12 +48,12 @@ public class EntityGenerator extends BaseGenerator {
                .append(getImportsByConfigEntityDTO(tableDTO.getColumns()));
 
         if (tableDTO.hasEnum(enums)) {
-            imports.append("import ").append(convertDirectoryToPackage(getEnumerationDirectory(propertyDTO.getUrlProject())))
+            imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), "enumeration")))
                    .append(".*;\n");
         }
 
         if (tableDTO.hasUpdate()) {
-            imports.append("import ").append(convertDirectoryToPackage(getDTODirectory(propertyDTO.getUrlProject())))
+            imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getUpdateDTOPath())))
                    .append(".").append(tableDTO.getTable()).append(propertyDTO.getUpdateDTOSuffix()).append(";\n")
                    .append(OPTIONAL.getFormattedImport());
         }

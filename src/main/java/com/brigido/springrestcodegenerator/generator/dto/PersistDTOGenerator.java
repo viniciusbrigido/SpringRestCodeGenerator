@@ -20,14 +20,14 @@ public class PersistDTOGenerator extends BaseGenerator {
         this.tableDTO = tableDTO;
 
         String fileName = tableDTO.getTable() + propertyDTO.getPersistDTOSuffix() + ".java";
-        createFile(getDTODirectory(propertyDTO.getUrlProject()), fileName, getResponseDTOCode(entitiesId, enums));
+        createFile(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getPersistDTOPath()), fileName, getResponseDTOCode(entitiesId, enums));
     }
 
     private String getResponseDTOCode(Map<String, String> entitiesId, List<String> enums) {
         StringBuilder code = new StringBuilder();
         String className = "public class %s%s {\n\n".formatted(tableDTO.getTable(), propertyDTO.getPersistDTOSuffix());
 
-        code.append(getPackageName(getDTODirectory(propertyDTO.getUrlProject())))
+        code.append(getPackageName(propertyDTO.getUrlProject(), propertyDTO.getPersistDTOPath()))
             .append(getImports(entitiesId, enums))
             .append(getLombokHeader(propertyDTO.isUseLombok()))
             .append(className)
@@ -78,7 +78,7 @@ public class PersistDTOGenerator extends BaseGenerator {
         }
 
         if (tableDTO.hasEnum(enums)) {
-            imports.append("import ").append(convertDirectoryToPackage(getEnumerationDirectory(propertyDTO.getUrlProject())))
+            imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), "enumeration")))
                    .append(".*;\n");
         }
 

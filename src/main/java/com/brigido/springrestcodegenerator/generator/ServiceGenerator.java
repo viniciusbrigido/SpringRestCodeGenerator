@@ -16,14 +16,14 @@ public class ServiceGenerator extends BaseGenerator {
         this.tableDTO = tableDTO;
 
         String fileName = tableDTO.getTable() + propertyDTO.getServiceSuffix() + ".java";
-        createFile(getServiceDirectory(propertyDTO.getUrlProject()), fileName, getServiceCode());
+        createFile(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getServicePath()), fileName, getServiceCode());
     }
 
     private String getServiceCode() {
         StringBuilder code = new StringBuilder();
         String interfaceName = "public interface %s%s {\n\n".formatted(tableDTO.getTable(), propertyDTO.getServiceSuffix());
 
-        code.append(getPackageName(getServiceDirectory(propertyDTO.getUrlProject())))
+        code.append(getPackageName(propertyDTO.getUrlProject(), propertyDTO.getServicePath()))
             .append(getImports())
             .append(interfaceName)
             .append(getCrudMethods())
@@ -34,17 +34,17 @@ public class ServiceGenerator extends BaseGenerator {
 
     private String getImports() {
         StringBuilder imports = new StringBuilder();
-        imports.append("import ").append(convertDirectoryToPackage(getDTODirectory(propertyDTO.getUrlProject())))
+        imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getPersistDTOPath())))
                .append(".").append(tableDTO.getTable()).append(propertyDTO.getPersistDTOSuffix()).append(";\n")
-               .append("import ").append(convertDirectoryToPackage(getDTODirectory(propertyDTO.getUrlProject())))
+               .append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getResponseDTOPath())))
                .append(".").append(tableDTO.getTable()).append(propertyDTO.getResponseDTOSuffix()).append(";\n");
 
         if (tableDTO.hasUpdate()) {
-            imports.append("import ").append(convertDirectoryToPackage(getDTODirectory(propertyDTO.getUrlProject())))
+            imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getUpdateDTOPath())))
                    .append(".").append(tableDTO.getTable()).append(propertyDTO.getUpdateDTOSuffix()).append(";\n");
         }
         imports.append("import ")
-               .append(convertDirectoryToPackage(getEntityDirectory(propertyDTO.getUrlProject(), propertyDTO.getPackageEntity())))
+               .append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getEntityPath())))
                .append(".").append(tableDTO.getTable()).append(";\n")
                .append(LIST.getFormattedImport())
                .append(getImportsIdLine(tableDTO.getColumns()))

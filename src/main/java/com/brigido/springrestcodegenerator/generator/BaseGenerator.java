@@ -41,8 +41,8 @@ public abstract class BaseGenerator {
         return directory;
     }
 
-    public String getPackageName(String directory) {
-        return "package %s;\n\n".formatted(convertDirectoryToPackage(directory));
+    public String getPackageName(String urlProject, String packageName) {
+        return "package %s;\n\n".formatted(convertDirectoryToPackage(getDirectory(urlProject, packageName)));
     }
 
     public String getImportsByConfigEntityDTO(List<ColumnDTO> columns) {
@@ -187,35 +187,7 @@ public abstract class BaseGenerator {
         return gettersSetters.toString();
     }
 
-    public String getControllerName(String packageController) {
-        return capitalizeFirstLetter(packageController);
-    }
-
-    public String getControllerDirectory(String directory, String packageController) {
-        return "%s/%s".formatted(directory, packageController);
-    }
-
-    public String getDTODirectory(String directory) {
-        return "%s/dto".formatted(directory);
-    }
-
-    public String getEntityDirectory(String directory, String packageEntity) {
-        return "%s/%s".formatted(directory, packageEntity);
-    }
-
-    public String getRepositoryDirectory(String directory) {
-        return "%s/repository".formatted(directory);
-    }
-
-    public String getServiceDirectory(String directory) {
-        return "%s/service".formatted(directory);
-    }
-
-    public String getServiceImplDirectory(String directory) {
-        return "%s/service/impl".formatted(directory);
-    }
-
-    public String getEnumerationDirectory(String directory) {
-        return "%s/enumeration".formatted(directory);
+    public String getDirectory(String urlProject, String packageName) {
+        return "%s/%s".formatted(urlProject, packageName);
     }
 }

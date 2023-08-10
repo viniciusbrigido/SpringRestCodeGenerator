@@ -6,10 +6,14 @@ public class PropertyDTO {
 
     private String urlProject;
     private String pathClass;
-    private String packageEntity;
-    private String packageController;
     private boolean useLombok;
     private boolean useSerializable;
+
+    private String controllerSuffix;
+    private String controllerPath;
+
+    private String entitySuffix;
+    private String entityPath;
 
     private String repositorySuffix;
     private String repositoryPath;
@@ -43,22 +47,6 @@ public class PropertyDTO {
 
     public void setPathClass(String pathClass) {
         this.pathClass = pathClass;
-    }
-
-    public String getPackageEntity() {
-        return packageEntity;
-    }
-
-    public void setPackageEntity(String packageEntity) {
-        this.packageEntity = packageEntity;
-    }
-
-    public String getPackageController() {
-        return packageController;
-    }
-
-    public void setPackageController(String packageController) {
-        this.packageController = packageController;
     }
 
     public boolean isUseLombok() {
@@ -125,6 +113,21 @@ public class PropertyDTO {
         this.responseDTOSuffix = responseDTOSuffix;
     }
 
+    public String getControllerSuffix() {
+        return requireNonNullElse(controllerSuffix, "Controller");
+    }
+
+    public void setControllerSuffix(String controllerSuffix) {
+        this.controllerSuffix = controllerSuffix;
+    }
+
+    public String getEntitySuffix() {
+        return requireNonNullElse(entitySuffix, "");
+    }
+
+    public void setEntitySuffix(String entitySuffix) {
+        this.entitySuffix = entitySuffix;
+    }
 
     public String getRepositoryPath() {
         return requireNonNullElse(repositoryPath, "repository");
@@ -172,5 +175,21 @@ public class PropertyDTO {
 
     public void setResponseDTOPath(String responseDTOPath) {
         this.responseDTOPath = responseDTOPath;
+    }
+
+    public String getControllerPath() {
+        return requireNonNullElse(controllerPath, "controller");
+    }
+
+    public void setControllerPath(String controllerPath) {
+        this.controllerPath = controllerPath;
+    }
+
+    public String getEntityPath() {
+        return requireNonNullElse(entityPath, "entity");
+    }
+
+    public void setEntityPath(String entityPath) {
+        this.entityPath = entityPath;
     }
 }

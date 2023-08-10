@@ -17,14 +17,14 @@ public class ResponseDTOGenerator extends BaseGenerator {
         this.tableDTO = tableDTO;
 
         String fileName = tableDTO.getTable() + propertyDTO.getResponseDTOSuffix() + ".java";
-        createFile(getDTODirectory(propertyDTO.getUrlProject()), fileName, getResponseDTOCode(enums));
+        createFile(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getResponseDTOPath()), fileName, getResponseDTOCode(enums));
     }
 
     private String getResponseDTOCode(List<String> enums) {
         StringBuilder code = new StringBuilder();
         String className = "public class %s%s {\n\n".formatted(tableDTO.getTable(), propertyDTO.getResponseDTOSuffix());
 
-        code.append(getPackageName(getDTODirectory(propertyDTO.getUrlProject())))
+        code.append(getPackageName(propertyDTO.getUrlProject(), propertyDTO.getResponseDTOPath()))
             .append(getImports(enums))
             .append(getLombokHeader(propertyDTO.isUseLombok()))
             .append(className)
@@ -63,7 +63,7 @@ public class ResponseDTOGenerator extends BaseGenerator {
                .append(getImportsByConfigEntityDTO(tableDTO.getColumns()));
 
         if (tableDTO.hasEnum(enums)) {
-            imports.append("import ").append(convertDirectoryToPackage(getEnumerationDirectory(propertyDTO.getUrlProject())))
+            imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), "enumeration")))
                    .append(".*;\n");
         }
 

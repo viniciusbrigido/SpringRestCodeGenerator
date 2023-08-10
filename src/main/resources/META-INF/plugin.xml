@@ -13,7 +13,7 @@
   ]]></description>
 
     <idea-version since-build="221.5591.52" />
-    <product-descriptor code="PSRCODEGEN" release-date="20230724" release-version="20231"/>
+<!--    <product-descriptor code="PSRCODEGEN" release-date="20230724" release-version="20231"/>-->
 
     <depends>com.intellij.modules.all</depends>
 

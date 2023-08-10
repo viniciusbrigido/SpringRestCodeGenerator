@@ -15,14 +15,14 @@ public class EnumGenerator extends BaseGenerator {
         this.propertyDTO = propertyDTO;
 
         String fileName = enumDTO.getName() + ".java";
-        createFile(getEnumerationDirectory(propertyDTO.getUrlProject()), fileName, getEnumCode(enumDTO));
+        createFile(getDirectory(propertyDTO.getUrlProject(), "enumeration"), fileName, getEnumCode(enumDTO));
     }
 
     private String getEnumCode(EnumDTO enumDTO) {
         StringBuilder code = new StringBuilder();
         String enumName = "public enum %s {\n".formatted(enumDTO.getName());
 
-        code.append(getPackageName(getEnumerationDirectory(propertyDTO.getUrlProject())))
+        code.append(getPackageName(propertyDTO.getUrlProject(), "enumeration"))
             .append(enumName)
             .append("\n")
             .append(getEnumValues(enumDTO.getValues()))
