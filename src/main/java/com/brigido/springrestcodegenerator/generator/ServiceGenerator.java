@@ -8,41 +8,43 @@ import static com.brigido.springrestcodegenerator.util.StringUtil.*;
 
 public class ServiceGenerator extends BaseGenerator {
 
-    private String directory;
+    private PropertyDTO propertyDTO;
+    private TableDTO tableDTO;
 
-    public void create(PropertyDTO propertyDTO, TableDTO tableDTO, String directory) throws IOException {
-        setPropertyDTO(propertyDTO);
-        this.directory = directory;
+    public void create(PropertyDTO propertyDTO, TableDTO tableDTO) throws IOException {
+        this.propertyDTO = propertyDTO;
+        this.tableDTO = tableDTO;
 
-        String fileName = tableDTO.getTable() + "Service.java";
-        createFile(getServiceDirectory(directory), fileName, getServiceCode(tableDTO));
+        String fileName = tableDTO.getTable() + propertyDTO.getServiceSuffix() + ".java";
+        createFile(getServiceDirectory(propertyDTO.getUrlProject()), fileName, getServiceCode());
     }
 
-    private String getServiceCode(TableDTO tableDTO) {
+    private String getServiceCode() {
         StringBuilder code = new StringBuilder();
-        String interfaceName = "public interface %sService {\n\n".formatted(tableDTO.getTable());
+        String interfaceName = "public interface %s%s {\n\n".formatted(tableDTO.getTable(), propertyDTO.getServiceSuffix());
 
-        code.append(getPackageName(getServiceDirectory(directory)))
-            .append(getImports(tableDTO))
+        code.append(getPackageName(getServiceDirectory(propertyDTO.getUrlProject())))
+            .append(getImports())
             .append(interfaceName)
-            .append(getCrudMethods(tableDTO))
+            .append(getCrudMethods())
             .append("}");
 
         return code.toString();
     }
 
-    private String getImports(TableDTO tableDTO) {
+    private String getImports() {
         StringBuilder imports = new StringBuilder();
-        imports.append("import ").append(convertDirectoryToPackage(getDTODirectory(directory)))
-               .append(".").append(tableDTO.getTable()).append("PersistDTO;\n")
-               .append("import ").append(convertDirectoryToPackage(getDTODirectory(directory)))
-               .append(".").append(tableDTO.getTable()).append("ResponseDTO;\n");
+        imports.append("import ").append(convertDirectoryToPackage(getDTODirectory(propertyDTO.getUrlProject())))
+               .append(".").append(tableDTO.getTable()).append(propertyDTO.getPersistDTOSuffix()).append(";\n")
+               .append("import ").append(convertDirectoryToPackage(getDTODirectory(propertyDTO.getUrlProject())))
+               .append(".").append(tableDTO.getTable()).append(propertyDTO.getResponseDTOSuffix()).append(";\n");
 
         if (tableDTO.hasUpdate()) {
-            imports.append("import ").append(convertDirectoryToPackage(getDTODirectory(directory)))
-                   .append(".").append(tableDTO.getTable()).append("UpdateDTO;\n");
+            imports.append("import ").append(convertDirectoryToPackage(getDTODirectory(propertyDTO.getUrlProject())))
+                   .append(".").append(tableDTO.getTable()).append(propertyDTO.getUpdateDTOSuffix()).append(";\n");
         }
-        imports.append("import ").append(convertDirectoryToPackage(getEntityDirectory(directory)))
+        imports.append("import ")
+               .append(convertDirectoryToPackage(getEntityDirectory(propertyDTO.getUrlProject(), propertyDTO.getPackageEntity())))
                .append(".").append(tableDTO.getTable()).append(";\n")
                .append(LIST.getFormattedImport())
                .append(getImportsIdLine(tableDTO.getColumns()))
@@ -51,18 +53,19 @@ public class ServiceGenerator extends BaseGenerator {
         return imports.toString();
     }
 
-    private String getCrudMethods(TableDTO tableDTO) {
+    private String getCrudMethods() {
         StringBuilder crudMethods = new StringBuilder();
         String objectNameLowerCase = lowerCaseFirstLetter(tableDTO.getTable());
 
-        String methodCreateName = "\t%sResponseDTO create(%sPersistDTO %sPersistDTO);\n".formatted(
-                tableDTO.getTable(), tableDTO.getTable(), objectNameLowerCase);
+        String methodCreateName = "\t%s%s create(%s%s %s%s);\n".formatted(
+                tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), tableDTO.getTable(), propertyDTO.getPersistDTOSuffix(),
+                objectNameLowerCase, propertyDTO.getPersistDTOSuffix());
 
         String methodFindByIdName = "\t%s findById(%s id);\n".formatted(
                 tableDTO.getTable(), tableDTO.getIdType());
 
-        String methodFindByIdDTOName = "\t%sResponseDTO findByIdDTO(%s id);\n".formatted(
-                tableDTO.getTable(), tableDTO.getIdType());
+        String methodFindByIdDTOName = "\t%s%s findByIdDTO(%s id);\n".formatted(
+                tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), tableDTO.getIdType());
 
         String methodDeleteName = "\tvoid delete(%s id);\n".formatted(tableDTO.getIdType());
 
@@ -72,13 +75,14 @@ public class ServiceGenerator extends BaseGenerator {
                    .append(methodDeleteName);
 
         if (tableDTO.hasUpdate()) {
-            String methodUpdateName = "\t%sResponseDTO update(%sUpdateDTO %sUpdateDTO);\n".formatted(
-                    tableDTO.getTable(), tableDTO.getTable(), objectNameLowerCase);
+            String methodUpdateName = "\t%s%s update(%s%s %s%s);\n".formatted(
+                    tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), tableDTO.getTable(), propertyDTO.getUpdateDTOSuffix(),
+                    objectNameLowerCase, propertyDTO.getUpdateDTOSuffix());
 
             crudMethods.append(methodUpdateName);
         }
 
-        String methodFindAllName = "\tList<%sResponseDTO> findAll();\n".formatted(tableDTO.getTable());
+        String methodFindAllName = "\tList<%s%s> findAll();\n".formatted(tableDTO.getTable(), propertyDTO.getResponseDTOSuffix());
         crudMethods.append(methodFindAllName);
 
         return crudMethods.toString();

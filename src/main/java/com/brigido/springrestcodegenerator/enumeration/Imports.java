@@ -7,6 +7,7 @@ public enum Imports {
     AUTOWIRED(null, "org.springframework.beans.factory.annotation.Autowired"),
     RESPONSE_ENTITY(null, "org.springframework.http.ResponseEntity"),
     LIST("List", "java.util.List"),
+    SET("Set", "java.util.Set"),
     PERSISTENCE(null, "jakarta.persistence.*"),
     OPTIONAL(null, "static java.util.Optional.*"),
     JPA_REPOSITORY(null, "org.springframework.data.jpa.repository.JpaRepository"),

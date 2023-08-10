@@ -9,37 +9,37 @@ import java.util.concurrent.atomic.AtomicReference;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
 import static com.brigido.springrestcodegenerator.util.StringUtil.*;
 import static java.util.Arrays.stream;
-import static java.util.Objects.*;
 
 public class PersistDTOGenerator extends BaseGenerator {
 
-    private String directory;
+    private PropertyDTO propertyDTO;
+    private TableDTO tableDTO;
 
-    public void create(PropertyDTO propertyDTO, TableDTO tableDTO, String directory, Map<String, String> entitiesId, List<String> enums) throws IOException {
-        setPropertyDTO(propertyDTO);
-        this.directory = directory;
+    public void create(PropertyDTO propertyDTO, TableDTO tableDTO, Map<String, String> entitiesId, List<String> enums) throws IOException {
+        this.propertyDTO = propertyDTO;
+        this.tableDTO = tableDTO;
 
-        String fileName = tableDTO.getTable() + "PersistDTO.java";
-        createFile(getDTODirectory(directory), fileName, getResponseDTOCode(tableDTO, entitiesId, enums));
+        String fileName = tableDTO.getTable() + propertyDTO.getPersistDTOSuffix() + ".java";
+        createFile(getDTODirectory(propertyDTO.getUrlProject()), fileName, getResponseDTOCode(entitiesId, enums));
     }
 
-    private String getResponseDTOCode(TableDTO tableDTO, Map<String, String> entitiesId, List<String> enums) {
+    private String getResponseDTOCode(Map<String, String> entitiesId, List<String> enums) {
         StringBuilder code = new StringBuilder();
-        String className = "public class %sPersistDTO {\n\n".formatted(tableDTO.getTable());
+        String className = "public class %s%s {\n\n".formatted(tableDTO.getTable(), propertyDTO.getPersistDTOSuffix());
 
-        code.append(getPackageName(getDTODirectory(directory)))
-            .append(getImports(tableDTO, entitiesId, enums))
-            .append(getLombokHeader())
+        code.append(getPackageName(getDTODirectory(propertyDTO.getUrlProject())))
+            .append(getImports(entitiesId, enums))
+            .append(getLombokHeader(propertyDTO.isUseLombok()))
             .append(className)
-            .append(getColumns(tableDTO, entitiesId))
-            .append(getConstructors(tableDTO, "PersistDTO"))
-            .append(getGettersSetters(tableDTO))
+            .append(getColumns(entitiesId))
+            .append(getConstructors(propertyDTO.isUseLombok(), tableDTO, propertyDTO.getPersistDTOSuffix()))
+            .append(getGettersSetters(propertyDTO.isUseLombok(), tableDTO))
             .append("}");
 
         return code.toString();
     }
 
-    private String getColumns(TableDTO tableDTO, Map<String, String> entitiesId) {
+    private String getColumns(Map<String, String> entitiesId) {
         StringBuilder columns = new StringBuilder();
         for (ColumnDTO columnDTO : tableDTO.getColumnsPersist()) {
             columns.append(getFieldCode(columnDTO, entitiesId));
@@ -48,7 +48,7 @@ public class PersistDTOGenerator extends BaseGenerator {
     }
 
     private String getFieldCode(ColumnDTO columnDTO, Map<String, String> entitiesId) {
-        if (columnDTO.isList() || columnDTO.isPrimaryKey()) {
+        if (columnDTO.isCollection() || columnDTO.isPrimaryKey()) {
             return "";
         }
 
@@ -67,18 +67,18 @@ public class PersistDTOGenerator extends BaseGenerator {
         return "%s\tprivate %s %s;\n\n".formatted(required, columnDTO.getType(), columnDTO.getName());
     }
 
-    private String getImports(TableDTO tableDTO, Map<String, String> entitiesId, List<String> enums) {
+    private String getImports(Map<String, String> entitiesId, List<String> enums) {
         StringBuilder imports = new StringBuilder();
-        imports.append(getLombokImport())
+        imports.append(getLombokImport(propertyDTO.isUseLombok()))
                .append(getImportsByConfigEntityDTO(tableDTO.getColumnsPersist()))
-               .append(getExternalImports(tableDTO, entitiesId));
+               .append(getExternalImports(entitiesId));
 
         if (tableDTO.hasRequired()) {
             imports.append(NOT_NULL.getFormattedImport());
         }
 
         if (tableDTO.hasEnum(enums)) {
-            imports.append("import ").append(convertDirectoryToPackage(getEnumerationDirectory(directory)))
+            imports.append("import ").append(convertDirectoryToPackage(getEnumerationDirectory(propertyDTO.getUrlProject())))
                    .append(".*;\n");
         }
 
@@ -86,7 +86,7 @@ public class PersistDTOGenerator extends BaseGenerator {
         return imports.toString();
     }
 
-    private String getExternalImports(TableDTO tableDTO, Map<String, String> entitiesId) {
+    private String getExternalImports(Map<String, String> entitiesId) {
         StringBuilder externalImports = new StringBuilder();
         List<String> imports = new ArrayList<>();
 

@@ -12,47 +12,49 @@ import static java.util.Objects.*;
 
 public class EntityGenerator extends BaseGenerator {
 
-    private String directory;
+    private PropertyDTO propertyDTO;
+    private TableDTO tableDTO;
 
-    public void create(PropertyDTO propertyDTO, TableDTO tableDTO, String directory, List<String> enums) throws IOException {
-        setPropertyDTO(propertyDTO);
-        this.directory = directory;
+    public void create(PropertyDTO propertyDTO, TableDTO tableDTO, List<String> enums) throws IOException {
+        this.propertyDTO = propertyDTO;
+        this.tableDTO = tableDTO;
 
         String fileName = tableDTO.getTable() + ".java";
-        createFile(getEntityDirectory(directory), fileName, getEntityCode(tableDTO, enums));
+        createFile(getEntityDirectory(propertyDTO.getUrlProject(), propertyDTO.getPackageEntity()), fileName, getEntityCode(enums));
     }
 
-    private String getEntityCode(TableDTO tableDTO, List<String> enums) {
+    private String getEntityCode(List<String> enums) {
         StringBuilder code = new StringBuilder();
-        String className = "public class %s %s{\n\n".formatted(tableDTO.getTable(), getSerializableImplements());
+        String className = "public class %s %s{\n\n"
+                .formatted(tableDTO.getTable(), getSerializableImplements(propertyDTO.isUseSerializable()));
 
-        code.append(getPackageName(getEntityDirectory(directory)))
-            .append(getImports(tableDTO, enums))
-            .append(getHeader(tableDTO))
+        code.append(getPackageName(getEntityDirectory(propertyDTO.getUrlProject(), propertyDTO.getPackageEntity())))
+            .append(getImports(enums))
+            .append(getHeader())
             .append(className)
-            .append(getColumns(tableDTO, enums))
-            .append(getConstructors(tableDTO, ""))
-            .append(getGettersSetters(tableDTO))
-            .append(getUpdateMethod(tableDTO))
+            .append(getColumns(enums))
+            .append(getConstructors(propertyDTO.isUseLombok(), tableDTO, ""))
+            .append(getGettersSetters(propertyDTO.isUseLombok(), tableDTO))
+            .append(getUpdateMethod())
             .append("}");
         return code.toString();
     }
 
-    private String getImports(TableDTO tableDTO, List<String> enums) {
+    private String getImports(List<String> enums) {
         StringBuilder imports = new StringBuilder();
         imports.append(PERSISTENCE.getFormattedImport())
-               .append(getSerializableImport())
-               .append(getLombokImport())
+               .append(getSerializableImport(propertyDTO.isUseSerializable()))
+               .append(getLombokImport(propertyDTO.isUseLombok()))
                .append(getImportsByConfigEntityDTO(tableDTO.getColumns()));
 
         if (tableDTO.hasEnum(enums)) {
-            imports.append("import ").append(convertDirectoryToPackage(getEnumerationDirectory(directory)))
+            imports.append("import ").append(convertDirectoryToPackage(getEnumerationDirectory(propertyDTO.getUrlProject())))
                    .append(".*;\n");
         }
 
         if (tableDTO.hasUpdate()) {
-            imports.append("import ").append(convertDirectoryToPackage(getDTODirectory(directory)))
-                   .append(".").append(tableDTO.getTable()).append("UpdateDTO;\n")
+            imports.append("import ").append(convertDirectoryToPackage(getDTODirectory(propertyDTO.getUrlProject())))
+                   .append(".").append(tableDTO.getTable()).append(propertyDTO.getUpdateDTOSuffix()).append(";\n")
                    .append(OPTIONAL.getFormattedImport());
         }
 
@@ -60,16 +62,16 @@ public class EntityGenerator extends BaseGenerator {
         return imports.toString();
     }
 
-    private String getHeader(TableDTO tableDTO) {
+    private String getHeader() {
         StringBuilder header = new StringBuilder();
-        header.append(getLombokHeader())
+        header.append(getLombokHeader(propertyDTO.isUseLombok()))
               .append("@Entity\n")
               .append("@Table(name = \"%s\")\n".formatted(parseCamelCaseToSnakeCase(tableDTO.getTable())));
 
         return header.toString();
     }
 
-    private String getColumns(TableDTO tableDTO, List<String> enums) {
+    private String getColumns(List<String> enums) {
         StringBuilder columns = new StringBuilder();
         for (ColumnDTO columnDTO : tableDTO.getColumns()) {
             columns.append(getFieldCode(columnDTO, enums));
@@ -86,15 +88,16 @@ public class EntityGenerator extends BaseGenerator {
         }
 
         if (columnDTO.hasEnumType()) {
-            fieldCode.append("\t@Enumerated(EnumType.%s)\n".formatted(columnDTO.getEnumType().toUpperCase()));
+            fieldCode.append(EnumType.getEnumType(columnDTO.getEnumType()));
         } else if (enums.contains(columnDTO.getType())) {
             fieldCode.append("\t@Enumerated(EnumType.STRING)\n");
         }
 
-        String typeFormatted = columnDTO.isList() ? "List<%s>".formatted(columnDTO.getType()) : columnDTO.getType();
+        String typeFormatted = columnDTO.isCollection() ? "%s<%s>".formatted(columnDTO.isList() ? LIST.getName() : SET.getName(), columnDTO.getType()) : columnDTO.getType();
         String propertyName = "\tprivate %s %s;\n".formatted(typeFormatted, columnDTO.getName());
 
         fieldCode.append(getCardinality(columnDTO))
+                 .append(getOrderBy(columnDTO))
                  .append(getColumnName(columnDTO))
                  .append(propertyName)
                  .append("\n");
@@ -102,11 +105,32 @@ public class EntityGenerator extends BaseGenerator {
         return fieldCode.toString();
     }
 
+    private String getCardinality(ColumnDTO columnDTO) {
+        if (!columnDTO.hasCardinality()) {
+            return "";
+        }
+        List<String> configsCardinality = new ArrayList<>();
+        if (columnDTO.hasMappedBy() && !Cardinality.MANY_TO_ONE.getName().equalsIgnoreCase(columnDTO.getCardinality())) {
+            configsCardinality.add("mappedBy = \"%s\"".formatted(columnDTO.getMappedBy()));
+        }
+        if (columnDTO.hasCascadeType()) {
+            configsCardinality.add(CascadeType.getCascadeType(columnDTO.getCascadeType()));
+        }
+        return Cardinality.getAnottation(columnDTO.getCardinality(), configsCardinality);
+    }
+
+    private String getOrderBy(ColumnDTO columnDTO) {
+        if (!columnDTO.hasOrderBy() || !columnDTO.isCollection()) {
+            return "";
+        }
+        return "\t@OrderBy(\"%s\")\n".formatted(columnDTO.getOrderBy());
+    }
+
     private String getColumnName(ColumnDTO columnDTO) {
         List<String> configsField = new ArrayList<>();
         String nameSnakeCase = parseCamelCaseToSnakeCase(columnDTO.getName());
 
-        if (columnDTO.hasCardinality() && !columnDTO.isList()) {
+        if (columnDTO.hasCardinality() && !columnDTO.isCollection()) {
             configsField.add("name = \"%s_id\"".formatted(nameSnakeCase));
         } else if (!columnDTO.hasCardinality() && !nameSnakeCase.equals(columnDTO.getName())) {
              configsField.add("name = \"%s\"".formatted(nameSnakeCase));
@@ -130,18 +154,6 @@ public class EntityGenerator extends BaseGenerator {
         return "\t@%sColumn(%s)\n".formatted(joinColumn, join(", ", configsField));
     }
 
-    private String getCardinality(ColumnDTO columnDTO) {
-        if (!columnDTO.hasCardinality()) {
-            return "";
-        }
-        List<String> configsCardinality = new ArrayList<>();
-        if (columnDTO.hasMappedBy()) {
-            configsCardinality.add("mappedBy = \"%s\"".formatted(columnDTO.getMappedBy()));
-        }
-
-        return Cardinality.getAnottation(columnDTO.getCardinality(), configsCardinality);
-    }
-
     private String getGeneratedValue(ColumnDTO columnDTO) {
         if (!columnDTO.hasGenerationType()) {
             return "\t@GeneratedValue\n";
@@ -149,7 +161,7 @@ public class EntityGenerator extends BaseGenerator {
         return GenerationType.getAnottation(columnDTO.getGenerationType());
     }
 
-    private String getUpdateMethod(TableDTO tableDTO) {
+    private String getUpdateMethod() {
         if (!tableDTO.hasUpdate()) {
             return "";
         }

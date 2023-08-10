@@ -7,36 +7,37 @@ import java.util.List;
 
 public class UpdateDTOGenerator extends BaseGenerator {
 
-    private String directory;
+    private PropertyDTO propertyDTO;
+    private TableDTO tableDTO;
 
-    public void create(PropertyDTO propertyDTO, TableDTO tableDTO, String directory, List<String> enums) throws IOException {
+    public void create(PropertyDTO propertyDTO, TableDTO tableDTO, List<String> enums) throws IOException {
         if (!tableDTO.hasUpdate()) {
             return;
         }
-        setPropertyDTO(propertyDTO);
-        this.directory = directory;
+        this.propertyDTO = propertyDTO;
+        this.tableDTO = tableDTO;
 
-        String fileName = tableDTO.getTable() + "UpdateDTO.java";
-        createFile(getDTODirectory(directory), fileName, getResponseDTOCode(tableDTO, enums));
+        String fileName = tableDTO.getTable() + propertyDTO.getUpdateDTOSuffix() + ".java";
+        createFile(getDTODirectory(propertyDTO.getUrlProject()), fileName, getResponseDTOCode(enums));
     }
 
-    private String getResponseDTOCode(TableDTO tableDTO, List<String> enums) {
+    private String getResponseDTOCode(List<String> enums) {
         StringBuilder code = new StringBuilder();
-        String className = "public class %sUpdateDTO {\n\n".formatted(tableDTO.getTable());
+        String className = "public class %s%s {\n\n".formatted(tableDTO.getTable(), propertyDTO.getUpdateDTOSuffix());
 
-        code.append(getPackageName(getDTODirectory(directory)))
-            .append(getImports(tableDTO, enums))
-            .append(getLombokHeader())
+        code.append(getPackageName(getDTODirectory(propertyDTO.getUrlProject())))
+            .append(getImports(enums))
+            .append(getLombokHeader(propertyDTO.isUseLombok()))
             .append(className)
-            .append(getColumns(tableDTO))
-            .append(getConstructors(tableDTO, "UpdateDTO"))
-            .append(getGettersSetters(tableDTO))
+            .append(getColumns())
+            .append(getConstructors(propertyDTO.isUseLombok(), tableDTO, propertyDTO.getUpdateDTOSuffix()))
+            .append(getGettersSetters(propertyDTO.isUseLombok(), tableDTO))
             .append("}");
 
         return code.toString();
     }
 
-    private String getColumns(TableDTO tableDTO) {
+    private String getColumns() {
         StringBuilder columns = new StringBuilder();
         for (ColumnDTO columnDTO : tableDTO.getColumnsUpdate()) {
             columns.append(getFieldCode(columnDTO));
@@ -48,13 +49,13 @@ public class UpdateDTOGenerator extends BaseGenerator {
         return "\tprivate %s %s;\n\n".formatted(columnDTO.getType(), columnDTO.getName());
     }
 
-    private String getImports(TableDTO tableDTO, List<String> enums) {
+    private String getImports(List<String> enums) {
         StringBuilder imports = new StringBuilder();
-        imports.append(getLombokImport())
+        imports.append(getLombokImport(propertyDTO.isUseLombok()))
                .append(getImportsByConfigEntityDTO(tableDTO.getColumnsUpdate()));
 
         if (tableDTO.hasEnum(enums)) {
-            imports.append("import ").append(convertDirectoryToPackage(getEnumerationDirectory(directory)))
+            imports.append("import ").append(convertDirectoryToPackage(getEnumerationDirectory(propertyDTO.getUrlProject())))
                    .append(".*;\n");
         }
 

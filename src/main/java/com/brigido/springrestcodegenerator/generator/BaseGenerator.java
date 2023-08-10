@@ -12,8 +12,6 @@ import static java.util.stream.Collectors.*;
 
 public abstract class BaseGenerator {
 
-    private PropertyDTO propertyDTO;
-
     public void createFile(String directory, String fileName, String code) throws IOException {
         try {
             createDirectory(directory);
@@ -68,6 +66,7 @@ public abstract class BaseGenerator {
             case LOCAL_DATE -> configEntityDTO.isContainsLocalDate();
             case LOCAL_DATE_TIME -> configEntityDTO.isContainsLocalDateTime();
             case LIST -> configEntityDTO.isContainsList();
+            case SET -> configEntityDTO.isContainsSet();
             default -> false;
         };
     }
@@ -105,40 +104,43 @@ public abstract class BaseGenerator {
             if (columnDTO.isList()) {
                 configEntityDTO.setContainsList(true);
             }
+            if (columnDTO.isSet()) {
+                configEntityDTO.setContainsSet(true);
+            }
         }
         return configEntityDTO;
     }
 
-    public String getLombokHeader() {
-        if (!propertyDTO.isUseLombok()) {
+    public String getLombokHeader(boolean isUseLombok) {
+        if (!isUseLombok) {
             return "";
         }
         return "@Getter @Setter\n@AllArgsConstructor @NoArgsConstructor\n@Builder\n";
     }
 
-    public String getLombokImport() {
-        if (!propertyDTO.isUseLombok()) {
+    public String getLombokImport(boolean isUseLombok) {
+        if (!isUseLombok) {
             return "";
         }
         return LOMBOK.getFormattedImport();
     }
 
-    public String getSerializableImplements() {
-        if (!propertyDTO.isUseSerializable()) {
+    public String getSerializableImplements(boolean isUseSerializable) {
+        if (!isUseSerializable) {
             return "";
         }
         return "implements Serializable ";
     }
 
-    public String getSerializableImport() {
-        if (!propertyDTO.isUseSerializable()) {
+    public String getSerializableImport(boolean isUseSerializable) {
+        if (!isUseSerializable) {
             return "";
         }
         return SERIALIZABLE.getFormattedImport();
     }
 
-    public String getConstructors(TableDTO tableDTO, String suffix) {
-        if (propertyDTO.isUseLombok()) {
+    public String getConstructors(boolean isUseLombok, TableDTO tableDTO, String suffix) {
+        if (isUseLombok) {
             return "";
         }
 
@@ -150,7 +152,9 @@ public abstract class BaseGenerator {
         List<String> properties = new ArrayList<>();
         List<String> setterLines = new ArrayList<>();
         for (ColumnDTO columnDTO : tableDTO.getColumns()) {
-            properties.add("%s %s".formatted(columnDTO.getType(), columnDTO.getName()));
+            String typeFormatted = columnDTO.isCollection() ? "%s<%s>"
+                    .formatted(columnDTO.isList() ? LIST.getName() : SET.getName(), columnDTO.getType()) : columnDTO.getType();
+            properties.add("%s %s".formatted(typeFormatted, columnDTO.getName()));
             setterLines.add("\t\tthis.%s = %s;\n".formatted(columnDTO.getName(), columnDTO.getName()));
         }
 
@@ -162,19 +166,20 @@ public abstract class BaseGenerator {
         return constructors.toString();
     }
 
-    public String getGettersSetters(TableDTO tableDTO) {
-        if (propertyDTO.isUseLombok()) {
+    public String getGettersSetters(boolean isUseLombok, TableDTO tableDTO) {
+        if (isUseLombok) {
             return "";
         }
 
         StringBuilder gettersSetters = new StringBuilder();
         for (ColumnDTO columnDTO : tableDTO.getColumns()) {
-            String methodGetName = "\tpublic %s get%s() {\n".formatted(columnDTO.getType(), capitalizeFirstLetter(columnDTO.getName()));
+            String typeFormatted = columnDTO.isCollection() ? "%s<%s>".formatted(columnDTO.isList() ? LIST.getName() : SET.getName(), columnDTO.getType()) : columnDTO.getType();
+            String methodGetName = "\tpublic %s get%s() {\n".formatted(typeFormatted, capitalizeFirstLetter(columnDTO.getName()));
             gettersSetters.append(methodGetName)
                           .append("\t\treturn ").append(columnDTO.getName()).append(";\n")
                           .append("\t}\n\n");
 
-            String methodSetName = "\tpublic void set%s(%s %s) {\n".formatted(capitalizeFirstLetter(columnDTO.getName()), columnDTO.getType(), columnDTO.getName());
+            String methodSetName = "\tpublic void set%s(%s %s) {\n".formatted(capitalizeFirstLetter(columnDTO.getName()), typeFormatted, columnDTO.getName());
             gettersSetters.append(methodSetName)
                           .append("\t\tthis.").append(columnDTO.getName()).append(" = ").append(columnDTO.getName()).append(";\n")
                           .append("\t}\n\n");
@@ -182,20 +187,20 @@ public abstract class BaseGenerator {
         return gettersSetters.toString();
     }
 
-    public String getControllerName() {
-        return capitalizeFirstLetter(propertyDTO.getPackageController());
+    public String getControllerName(String packageController) {
+        return capitalizeFirstLetter(packageController);
     }
 
-    public String getControllerDirectory(String directory) {
-        return "%s/%s".formatted(directory, propertyDTO.getPackageController());
+    public String getControllerDirectory(String directory, String packageController) {
+        return "%s/%s".formatted(directory, packageController);
     }
 
     public String getDTODirectory(String directory) {
         return "%s/dto".formatted(directory);
     }
 
-    public String getEntityDirectory(String directory) {
-        return "%s/%s".formatted(directory, propertyDTO.getPackageEntity());
+    public String getEntityDirectory(String directory, String packageEntity) {
+        return "%s/%s".formatted(directory, packageEntity);
     }
 
     public String getRepositoryDirectory(String directory) {
@@ -212,13 +217,5 @@ public abstract class BaseGenerator {
 
     public String getEnumerationDirectory(String directory) {
         return "%s/enumeration".formatted(directory);
-    }
-
-    public PropertyDTO getPropertyDTO() {
-        return propertyDTO;
-    }
-
-    public void setPropertyDTO(PropertyDTO propertyDTO) {
-        this.propertyDTO = propertyDTO;
     }
 }

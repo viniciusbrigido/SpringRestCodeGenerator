@@ -77,12 +77,14 @@ public class ColumnDTO {
     private Boolean primaryKey;
     private Boolean required;
     private Boolean list;
+    private Boolean set;
     private Boolean unique;
     private Boolean updatable;
     private String generationType;
     private String cardinality;
     private String enumType;
     private String mappedBy;
+    private String orderBy;
 }
 ```
 
@@ -100,6 +102,8 @@ public class ColumnDTO {
 
 `list (opcional, default false):` Indica que a coluna será uma lista.
 
+`set (opcional, default false):` Indica que a coluna será uma set.
+
 `unique (opcional, default false):` Indica que a coluna terá a Constraint unique.
 
 `updatable (opcional, default true):` Indica que a coluna pode ser atualizada. Será criado um DTO específico para atualização. Caso nenhuma propriedade possa ser atualizada, o DTO e o método de atualização correspondente não serão gerados.
@@ -111,6 +115,8 @@ public class ColumnDTO {
 `enumType (opcional, case insensitive, default STRING):` Indica a forma que a coluna de enum será persistida. Pode ser um dos seguintes valores: `String` ou `Ordinal`.
 
 `mappedBy (opcional, case sensitive):` Usado em relacionamentos bidirecionais no JPA. Serve para indicar que o controle do relacionamento está no lado oposto da associação.
+
+`orderBy (opcional, case sensitive):` Usado para especificar a ordenação dos elementos em uma coleção mapeada em uma entidade JPA, definindo o campo pelo qual a ordenação deve ser realizada.
 
 #### Aqui está um exemplo de definição de entidade:
 

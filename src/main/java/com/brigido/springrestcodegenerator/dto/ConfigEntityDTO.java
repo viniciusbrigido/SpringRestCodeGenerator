@@ -2,19 +2,6 @@ package com.brigido.springrestcodegenerator.dto;
 
 public class ConfigEntityDTO {
 
-    public ConfigEntityDTO() {
-    }
-
-    public ConfigEntityDTO(boolean containsDate, boolean containsUUID, boolean containsBigInteger, boolean containsBigDecimal, boolean containsLocalDate, boolean containsLocalDateTime, boolean containsList) {
-        this.containsDate = containsDate;
-        this.containsUUID = containsUUID;
-        this.containsBigInteger = containsBigInteger;
-        this.containsBigDecimal = containsBigDecimal;
-        this.containsLocalDate = containsLocalDate;
-        this.containsLocalDateTime = containsLocalDateTime;
-        this.containsList = containsList;
-    }
-
     private boolean containsDate;
     private boolean containsUUID;
     private boolean containsBigInteger;
@@ -22,6 +9,23 @@ public class ConfigEntityDTO {
     private boolean containsLocalDate;
     private boolean containsLocalDateTime;
     private boolean containsList;
+    private boolean containsSet;
+
+    public ConfigEntityDTO() {
+    }
+
+    public ConfigEntityDTO(boolean containsDate, boolean containsUUID, boolean containsBigInteger, boolean containsBigDecimal,
+                           boolean containsLocalDate, boolean containsLocalDateTime, boolean containsList,
+                           boolean containsSet) {
+        this.containsDate = containsDate;
+        this.containsUUID = containsUUID;
+        this.containsBigInteger = containsBigInteger;
+        this.containsBigDecimal = containsBigDecimal;
+        this.containsLocalDate = containsLocalDate;
+        this.containsLocalDateTime = containsLocalDateTime;
+        this.containsList = containsList;
+        this.containsSet = containsSet;
+    }
 
     public boolean isContainsDate() {
         return containsDate;
@@ -77,5 +81,13 @@ public class ConfigEntityDTO {
 
     public void setContainsList(boolean containsList) {
         this.containsList = containsList;
+    }
+
+    public boolean isContainsSet() {
+        return containsSet;
+    }
+
+    public void setContainsSet(boolean containsSet) {
+        this.containsSet = containsSet;
     }
 }

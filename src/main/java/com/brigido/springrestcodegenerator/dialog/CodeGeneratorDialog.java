@@ -123,7 +123,12 @@ public class CodeGeneratorDialog extends DialogWrapper {
         gbc.gridy++;
         panel.add(additionalFieldsPanel, gbc);
 
-        panel.setPreferredSize(new Dimension(500, panel.getPreferredSize().height));
+        gbc.gridy++;
+        JButton extraSettingsButton = new JButton("Configurações Extras");
+        extraSettingsButton.addActionListener(e -> showExtraSettingsDialog());
+        panel.add(extraSettingsButton, gbc);
+
+        panel.setPreferredSize(new Dimension(530, panel.getPreferredSize().height));
         loadProperties();
         return panel;
     }
@@ -204,5 +209,25 @@ public class CodeGeneratorDialog extends DialogWrapper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void showExtraSettingsDialog() {
+        ExtraSettingsDialog extraSettingsDialog = new ExtraSettingsDialog(this);
+        extraSettingsDialog.show();
+    }
+
+    public void setExtraSettings(PropertyDTO propertyDTOExtraSettings) {
+        getPropertyDTO().setServiceSuffix(propertyDTOExtraSettings.getServiceSuffix());
+        getPropertyDTO().setServicePath(propertyDTOExtraSettings.getServicePath());
+        getPropertyDTO().setServiceImplSuffix(propertyDTOExtraSettings.getServiceImplSuffix());
+        getPropertyDTO().setServiceImplPath(propertyDTOExtraSettings.getServiceImplPath());
+        getPropertyDTO().setRepositorySuffix(propertyDTOExtraSettings.getRepositorySuffix());
+        getPropertyDTO().setRepositoryPath(propertyDTOExtraSettings.getRepositoryPath());
+        getPropertyDTO().setPersistDTOSuffix(propertyDTOExtraSettings.getPersistDTOSuffix());
+        getPropertyDTO().setPersistDTOPath(propertyDTOExtraSettings.getPersistDTOPath());
+        getPropertyDTO().setUpdateDTOSuffix(propertyDTOExtraSettings.getUpdateDTOSuffix());
+        getPropertyDTO().setUpdateDTOPath(propertyDTOExtraSettings.getUpdateDTOPath());
+        getPropertyDTO().setResponseDTOSuffix(propertyDTOExtraSettings.getResponseDTOSuffix());
+        getPropertyDTO().setResponseDTOPath(propertyDTOExtraSettings.getResponseDTOPath());
     }
 }

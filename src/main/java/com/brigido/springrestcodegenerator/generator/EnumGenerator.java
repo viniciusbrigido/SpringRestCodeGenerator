@@ -9,21 +9,20 @@ import static java.util.stream.Collectors.*;
 
 public class EnumGenerator extends BaseGenerator {
 
-    private String directory;
+    private PropertyDTO propertyDTO;
 
-    public void create(PropertyDTO propertyDTO, EnumDTO enumDTO, String directory) throws IOException {
-        setPropertyDTO(propertyDTO);
-        this.directory = directory;
+    public void create(PropertyDTO propertyDTO, EnumDTO enumDTO) throws IOException {
+        this.propertyDTO = propertyDTO;
 
         String fileName = enumDTO.getName() + ".java";
-        createFile(getEnumerationDirectory(directory), fileName, getEnumCode(enumDTO));
+        createFile(getEnumerationDirectory(propertyDTO.getUrlProject()), fileName, getEnumCode(enumDTO));
     }
 
     private String getEnumCode(EnumDTO enumDTO) {
         StringBuilder code = new StringBuilder();
         String enumName = "public enum %s {\n".formatted(enumDTO.getName());
 
-        code.append(getPackageName(getEnumerationDirectory(directory)))
+        code.append(getPackageName(getEnumerationDirectory(propertyDTO.getUrlProject())))
             .append(enumName)
             .append("\n")
             .append(getEnumValues(enumDTO.getValues()))

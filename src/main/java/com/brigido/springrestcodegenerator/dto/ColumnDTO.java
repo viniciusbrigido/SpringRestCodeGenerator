@@ -11,17 +11,21 @@ public class ColumnDTO {
     private Boolean required;
     private Boolean updatable;
     private Boolean list;
+    private Boolean set;
     private Boolean unique;
     private String generationType;
     private String cardinality;
     private String enumType;
     private String mappedBy;
+    private String orderBy;
+    private String cascadeType;
 
     public ColumnDTO() {
     }
 
     public ColumnDTO(String name, String type, Integer length, Boolean primaryKey, Boolean required, Boolean updatable,
-                     Boolean list, Boolean unique, String generationType, String cardinality, String enumType, String mappedBy) {
+                     Boolean list, Boolean set, Boolean unique, String generationType, String cardinality, String enumType,
+                     String mappedBy, String orderBy, String cascadeType) {
         this.name = name;
         this.type = type;
         this.length = length;
@@ -29,11 +33,14 @@ public class ColumnDTO {
         this.required = required;
         this.updatable = updatable;
         this.list = list;
+        this.set = set;
         this.unique = unique;
         this.generationType = generationType;
         this.cardinality = cardinality;
         this.enumType = enumType;
         this.mappedBy = mappedBy;
+        this.orderBy = orderBy;
+        this.cascadeType = cascadeType;
     }
 
     public String getName() {
@@ -92,6 +99,14 @@ public class ColumnDTO {
         this.list = list;
     }
 
+    public Boolean isSet() {
+        return requireNonNullElse(set, false);
+    }
+
+    public void setSet(Boolean set) {
+        this.set = set;
+    }
+
     public Boolean isUnique() {
         return requireNonNullElse(unique, false);
     }
@@ -132,6 +147,22 @@ public class ColumnDTO {
         this.mappedBy = mappedBy;
     }
 
+    public String getOrderBy() {
+        return orderBy;
+    }
+
+    public void setOrderBy(String orderBy) {
+        this.orderBy = orderBy;
+    }
+
+    public String getCascadeType() {
+        return cascadeType;
+    }
+
+    public void setCascadeType(String cascadeType) {
+        this.cascadeType = cascadeType;
+    }
+
     public boolean hasCardinality() {
         return nonNull(cardinality) && !cardinality.isEmpty();
     }
@@ -146,5 +177,17 @@ public class ColumnDTO {
 
     public boolean hasMappedBy() {
         return nonNull(mappedBy) && !mappedBy.isEmpty();
+    }
+
+    public boolean hasOrderBy() {
+        return nonNull(orderBy) && !orderBy.isEmpty();
+    }
+
+    public boolean hasCascadeType() {
+        return nonNull(cascadeType) && !cascadeType.isEmpty();
+    }
+
+    public boolean isCollection() {
+        return isList() || isSet();
     }
 }

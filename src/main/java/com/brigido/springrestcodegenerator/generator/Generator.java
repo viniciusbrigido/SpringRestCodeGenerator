@@ -1,8 +1,7 @@
 package com.brigido.springrestcodegenerator.generator;
 
 import com.brigido.springrestcodegenerator.dto.*;
-import com.brigido.springrestcodegenerator.enumeration.Cardinality;
-import com.brigido.springrestcodegenerator.enumeration.GenerationType;
+import com.brigido.springrestcodegenerator.enumeration.*;
 import com.brigido.springrestcodegenerator.exception.SyntaxErrorException;
 import com.brigido.springrestcodegenerator.generator.dto.*;
 import com.google.gson.Gson;
@@ -16,7 +15,6 @@ public class Generator {
     public void generate(PropertyDTO propertyDTO) throws IOException {
         validateFiles(propertyDTO);
 
-        String directory = propertyDTO.getUrlProject();
         RequestDTO requestDTO = getRequestDTO(propertyDTO);
         validateRequestDTO(requestDTO);
 
@@ -24,18 +22,18 @@ public class Generator {
         List<String> enums = getEnums(requestDTO.getEnums());
 
         for (TableDTO tableDTO : requestDTO.getTables()) {
-            new EntityGenerator().create(propertyDTO, tableDTO, directory, enums);
-            new RepositoryGenerator().create(propertyDTO, tableDTO, directory);
-            new ServiceGenerator().create(propertyDTO, tableDTO, directory);
-            new ServiceImplGenerator().create(propertyDTO, tableDTO, directory);
-            new ControllerGenerator().create(propertyDTO, tableDTO, directory);
-            new ResponseDTOGenerator().create(propertyDTO, tableDTO, directory, enums);
-            new PersistDTOGenerator().create(propertyDTO, tableDTO, directory, entitiesId, enums);
-            new UpdateDTOGenerator().create(propertyDTO, tableDTO, directory, enums);
+            new EntityGenerator().create(propertyDTO, tableDTO, enums);
+            new RepositoryGenerator().create(propertyDTO, tableDTO);
+            new ServiceGenerator().create(propertyDTO, tableDTO);
+            new ServiceImplGenerator().create(propertyDTO, tableDTO);
+            new ControllerGenerator().create(propertyDTO, tableDTO);
+            new ResponseDTOGenerator().create(propertyDTO, tableDTO, enums);
+            new PersistDTOGenerator().create(propertyDTO, tableDTO, entitiesId, enums);
+            new UpdateDTOGenerator().create(propertyDTO, tableDTO, enums);
         }
 
         for (EnumDTO enumDTO : requestDTO.getEnums()) {
-            new EnumGenerator().create(propertyDTO, enumDTO, directory);
+            new EnumGenerator().create(propertyDTO, enumDTO);
         }
     }
 
@@ -81,12 +79,20 @@ public class Generator {
                     throw new SyntaxErrorException("A coluna %s da entidade %s não possui tipo."
                             .formatted(columnDTO.getName(), tableDTO.getTable()));
                 }
+                if (columnDTO.hasEnumType() && EnumType.getEnumType(columnDTO.getEnumType()).isEmpty()) {
+                    throw new SyntaxErrorException("O tipo de enumeração da coluna %s da entidade %s é inválido."
+                            .formatted(columnDTO.getName(), tableDTO.getTable()));
+                }
                 if (columnDTO.hasCardinality() && Cardinality.getAnottation(columnDTO.getCardinality(), null).isEmpty()) {
                     throw new SyntaxErrorException("A cardinalidade da coluna %s da entidade %s é inválido."
                             .formatted(columnDTO.getName(), tableDTO.getTable()));
                 }
                 if (columnDTO.hasGenerationType() && GenerationType.getAnottation(columnDTO.getGenerationType()).isEmpty()) {
                     throw new SyntaxErrorException("O tipo de geração da coluna %s da entidade %s é inválido."
+                            .formatted(columnDTO.getName(), tableDTO.getTable()));
+                }
+                if (columnDTO.hasCascadeType() && CascadeType.getCascadeType(columnDTO.getCascadeType()).isEmpty()) {
+                    throw new SyntaxErrorException("O tipo de cascata da coluna %s da entidade %s é inválido."
                             .formatted(columnDTO.getName(), tableDTO.getTable()));
                 }
             }

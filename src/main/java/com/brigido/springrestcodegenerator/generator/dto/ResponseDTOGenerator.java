@@ -5,37 +5,38 @@ import com.brigido.springrestcodegenerator.generator.BaseGenerator;
 import java.io.IOException;
 import java.util.List;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.LIST;
-import static java.util.Objects.*;
+import static com.brigido.springrestcodegenerator.enumeration.Imports.SET;
 
 public class ResponseDTOGenerator extends BaseGenerator {
 
-    private String directory;
+    private PropertyDTO propertyDTO;
+    private TableDTO tableDTO;
 
-    public void create(PropertyDTO propertyDTO, TableDTO tableDTO, String directory, List<String> enums) throws IOException {
-        setPropertyDTO(propertyDTO);
-        this.directory = directory;
+    public void create(PropertyDTO propertyDTO, TableDTO tableDTO, List<String> enums) throws IOException {
+        this.propertyDTO = propertyDTO;
+        this.tableDTO = tableDTO;
 
-        String fileName = tableDTO.getTable() + "ResponseDTO.java";
-        createFile(getDTODirectory(directory), fileName, getResponseDTOCode(tableDTO, enums));
+        String fileName = tableDTO.getTable() + propertyDTO.getResponseDTOSuffix() + ".java";
+        createFile(getDTODirectory(propertyDTO.getUrlProject()), fileName, getResponseDTOCode(enums));
     }
 
-    private String getResponseDTOCode(TableDTO tableDTO, List<String> enums) {
+    private String getResponseDTOCode(List<String> enums) {
         StringBuilder code = new StringBuilder();
-        String className = "public class %sResponseDTO {\n\n".formatted(tableDTO.getTable());
+        String className = "public class %s%s {\n\n".formatted(tableDTO.getTable(), propertyDTO.getResponseDTOSuffix());
 
-        code.append(getPackageName(getDTODirectory(directory)))
-            .append(getImports(tableDTO, enums))
-            .append(getLombokHeader())
+        code.append(getPackageName(getDTODirectory(propertyDTO.getUrlProject())))
+            .append(getImports(enums))
+            .append(getLombokHeader(propertyDTO.isUseLombok()))
             .append(className)
-            .append(getColumns(tableDTO))
-            .append(getConstructors(tableDTO, "ResponseDTO"))
-            .append(getGettersSetters(tableDTO))
+            .append(getColumns())
+            .append(getConstructors(propertyDTO.isUseLombok(), tableDTO, propertyDTO.getResponseDTOSuffix()))
+            .append(getGettersSetters(propertyDTO.isUseLombok(), tableDTO))
             .append("}");
 
         return code.toString();
     }
 
-    private String getColumns(TableDTO tableDTO) {
+    private String getColumns() {
         StringBuilder columns = new StringBuilder();
         for (ColumnDTO columnDTO : tableDTO.getColumns()) {
             columns.append(getFieldCode(columnDTO));
@@ -49,20 +50,20 @@ public class ResponseDTOGenerator extends BaseGenerator {
             return "";
         }
 
-        String typeFormatted = columnDTO.isList() ? "%s<%s>".formatted(LIST.getName(), columnDTO.getType()) : columnDTO.getType();
+        String typeFormatted = columnDTO.isCollection() ? "%s<%s>".formatted(columnDTO.isList() ? LIST.getName() : SET.getName(), columnDTO.getType()) : columnDTO.getType();
         String propertyName = "\tprivate %s %s;\n\n".formatted(typeFormatted, columnDTO.getName());
         fieldCode.append(propertyName);
 
         return fieldCode.toString();
     }
 
-    private String getImports(TableDTO tableDTO, List<String> enums) {
+    private String getImports(List<String> enums) {
         StringBuilder imports = new StringBuilder();
-        imports.append(getLombokImport())
+        imports.append(getLombokImport(propertyDTO.isUseLombok()))
                .append(getImportsByConfigEntityDTO(tableDTO.getColumns()));
 
         if (tableDTO.hasEnum(enums)) {
-            imports.append("import ").append(convertDirectoryToPackage(getEnumerationDirectory(directory)))
+            imports.append("import ").append(convertDirectoryToPackage(getEnumerationDirectory(propertyDTO.getUrlProject())))
                    .append(".*;\n");
         }
 
