@@ -29,14 +29,22 @@
             <add-to-group group-id="MainMenu" anchor="last" />
         </group>
 
-        <action id="com.brigido.springrestcodegenerator.dialog.CodeGeneratorDialogAction"
-                class="com.brigido.springrestcodegenerator.dialog.CodeGeneratorDialogAction"
+        <action id="com.brigido.springrestcodegenerator.action.CodeGeneratorAction"
+                class="com.brigido.springrestcodegenerator.action.CodeGeneratorAction"
                 text="Generate Code"
                 description="Generate code using the SpringRestCodeGenerator">
 
             <keyboard-shortcut first-keystroke="ctrl alt g" keymap="$default"/>
             <add-to-group group-id="SpringRestCodeGenerator"
                           anchor="first" />
+        </action>
+
+        <action id="com.brigido.springrestcodegenerator.action.DocumentationAction"
+                class="com.brigido.springrestcodegenerator.action.DocumentationAction"
+                text="Documentation"
+                description="Documentation of SpringRestCodeGenerator">
+
+            <add-to-group group-id="SpringRestCodeGenerator" anchor="first" />
         </action>
     </actions>
 </idea-plugin>

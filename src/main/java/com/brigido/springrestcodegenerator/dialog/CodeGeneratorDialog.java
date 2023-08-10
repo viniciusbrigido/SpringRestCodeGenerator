@@ -27,7 +27,7 @@ public class CodeGeneratorDialog extends DialogWrapper {
 
     private PropertyDTO propertyDTO;
 
-    protected CodeGeneratorDialog() {
+    public CodeGeneratorDialog() {
         super(true);
         setTitle(TITLE);
         setOKButtonText("Gerar");
