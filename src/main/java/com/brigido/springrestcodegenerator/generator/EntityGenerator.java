@@ -19,14 +19,14 @@ public class EntityGenerator extends BaseGenerator {
         this.propertyDTO = propertyDTO;
         this.tableDTO = tableDTO;
 
-        String fileName = tableDTO.getTable() + ".java";
+        String fileName = tableDTO.getTable() + propertyDTO.getEntitySuffix() + ".java";
         createFile(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getEntityPath()), fileName, getEntityCode(enums));
     }
 
     private String getEntityCode(List<String> enums) {
         StringBuilder code = new StringBuilder();
-        String className = "public class %s %s{\n\n"
-                .formatted(tableDTO.getTable(), getSerializableImplements(propertyDTO.isUseSerializable()));
+        String className = "public class %s%s %s{\n\n"
+                .formatted(tableDTO.getTable(), propertyDTO.getEntitySuffix(), getSerializableImplements(propertyDTO.isUseSerializable()));
 
         code.append(getPackageName(propertyDTO.getUrlProject(), propertyDTO.getEntityPath()))
             .append(getImports(enums))

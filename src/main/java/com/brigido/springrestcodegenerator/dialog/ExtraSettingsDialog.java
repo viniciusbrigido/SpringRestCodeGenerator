@@ -2,6 +2,7 @@ package com.brigido.springrestcodegenerator.dialog;
 
 import com.brigido.springrestcodegenerator.config.CodeGeneratorSettings;
 import com.brigido.springrestcodegenerator.dto.PropertyDTO;
+import com.brigido.springrestcodegenerator.util.StringUtil;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
@@ -12,6 +13,8 @@ import java.awt.*;
 import static java.util.Objects.*;
 
 public class ExtraSettingsDialog extends DialogWrapper {
+
+    public static final String TITLE = "Configurações Extras";
 
     private PropertyDTO propertyDTO;
     private CodeGeneratorDialog codeGeneratorDialog;
@@ -43,7 +46,9 @@ public class ExtraSettingsDialog extends DialogWrapper {
     public ExtraSettingsDialog(CodeGeneratorDialog codeGeneratorDialog) {
         super(true);
         this.codeGeneratorDialog = codeGeneratorDialog;
-        setTitle("Configurações Extras");
+        setOKButtonText("Salvar");
+        setCancelButtonText("Sair");
+        setTitle(TITLE);
         init();
     }
 
@@ -173,20 +178,20 @@ public class ExtraSettingsDialog extends DialogWrapper {
             propertyDTO = new PropertyDTO();
         }
         serviceSuffix.setText(propertyDTO.getServiceSuffix());
-        servicePath.setText(propertyDTO.getServicePath());
         serviceImplSuffix.setText(propertyDTO.getServiceImplSuffix());
-        serviceImplPath.setText(propertyDTO.getServiceImplPath());
         repositorySuffix.setText(propertyDTO.getRepositorySuffix());
-        repositoryPath.setText(propertyDTO.getRepositoryPath());
         persistDTOSuffix.setText(propertyDTO.getPersistDTOSuffix());
-        persistDTOPath.setText(propertyDTO.getPersistDTOPath());
         updateDTOSuffix.setText(propertyDTO.getUpdateDTOSuffix());
-        updateDTOPath.setText(propertyDTO.getUpdateDTOPath());
         responseDTOSuffix.setText(propertyDTO.getResponseDTOSuffix());
-        responseDTOPath.setText(propertyDTO.getResponseDTOPath());
         controllerSuffix.setText(propertyDTO.getControllerSuffix());
-        controllerPath.setText(propertyDTO.getControllerPath());
         entitySuffix.setText(propertyDTO.getEntitySuffix());
+        servicePath.setText(propertyDTO.getServicePath());
+        serviceImplPath.setText(propertyDTO.getServiceImplPath());
+        repositoryPath.setText(propertyDTO.getRepositoryPath());
+        persistDTOPath.setText(propertyDTO.getPersistDTOPath());
+        updateDTOPath.setText(propertyDTO.getUpdateDTOPath());
+        responseDTOPath.setText(propertyDTO.getResponseDTOPath());
+        controllerPath.setText(propertyDTO.getControllerPath());
         entityPath.setText(propertyDTO.getEntityPath());
     }
 
@@ -197,28 +202,31 @@ public class ExtraSettingsDialog extends DialogWrapper {
     }
 
     private PropertyDTO getPropertyDTO() {
-        propertyDTO.setServiceSuffix(getTextFieldValue(serviceSuffix));
-        propertyDTO.setServicePath(getTextFieldValue(servicePath));
-        propertyDTO.setServiceImplSuffix(getTextFieldValue(serviceImplSuffix));
-        propertyDTO.setServiceImplPath(getTextFieldValue(serviceImplPath));
-        propertyDTO.setRepositorySuffix(getTextFieldValue(repositorySuffix));
-        propertyDTO.setRepositoryPath(getTextFieldValue(repositoryPath));
-        propertyDTO.setPersistDTOSuffix(getTextFieldValue(persistDTOSuffix));
-        propertyDTO.setPersistDTOPath(getTextFieldValue(persistDTOPath));
-        propertyDTO.setUpdateDTOSuffix(getTextFieldValue(updateDTOSuffix));
-        propertyDTO.setUpdateDTOPath(getTextFieldValue(updateDTOPath));
-        propertyDTO.setResponseDTOSuffix(getTextFieldValue(responseDTOSuffix));
-        propertyDTO.setResponseDTOPath(getTextFieldValue(responseDTOPath));
-        propertyDTO.setControllerSuffix(getTextFieldValue(controllerSuffix));
-        propertyDTO.setControllerPath(getTextFieldValue(controllerPath));
-        propertyDTO.setEntitySuffix(getTextFieldValue(entitySuffix));
-        propertyDTO.setEntityPath(getTextFieldValue(entityPath));
+        propertyDTO.setServiceSuffix(getTextFieldValue(serviceSuffix, true));
+        propertyDTO.setServiceImplSuffix(getTextFieldValue(serviceImplSuffix, true));
+        propertyDTO.setRepositorySuffix(getTextFieldValue(repositorySuffix, true));
+        propertyDTO.setPersistDTOSuffix(getTextFieldValue(persistDTOSuffix, true));
+        propertyDTO.setUpdateDTOSuffix(getTextFieldValue(updateDTOSuffix, true));
+        propertyDTO.setResponseDTOSuffix(getTextFieldValue(responseDTOSuffix, true));
+        propertyDTO.setControllerSuffix(getTextFieldValue(controllerSuffix, true));
+        propertyDTO.setEntitySuffix(getTextFieldValue(entitySuffix, true));
+        propertyDTO.setServicePath(getTextFieldValue(servicePath, false));
+        propertyDTO.setServiceImplPath(getTextFieldValue(serviceImplPath, false));
+        propertyDTO.setRepositoryPath(getTextFieldValue(repositoryPath, false));
+        propertyDTO.setPersistDTOPath(getTextFieldValue(persistDTOPath, false));
+        propertyDTO.setUpdateDTOPath(getTextFieldValue(updateDTOPath, false));
+        propertyDTO.setResponseDTOPath(getTextFieldValue(responseDTOPath, false));
+        propertyDTO.setControllerPath(getTextFieldValue(controllerPath, false));
+        propertyDTO.setEntityPath(getTextFieldValue(entityPath, false));
 
         return propertyDTO;
     }
 
-    private String getTextFieldValue(JBTextField textField) {
+    private String getTextFieldValue(JBTextField textField, boolean isSuffix) {
         if (nonNull(textField) && nonNull(textField.getText()) && !textField.getText().isEmpty()) {
+            if (isSuffix) {
+                return StringUtil.capitalizeFirstLetter(textField.getText());
+            }
             return textField.getText();
         }
         return null;

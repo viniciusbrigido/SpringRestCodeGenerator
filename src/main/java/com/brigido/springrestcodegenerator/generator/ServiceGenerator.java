@@ -45,7 +45,7 @@ public class ServiceGenerator extends BaseGenerator {
         }
         imports.append("import ")
                .append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getEntityPath())))
-               .append(".").append(tableDTO.getTable()).append(";\n")
+               .append(".").append(tableDTO.getTable()).append(propertyDTO.getEntitySuffix()).append(";\n")
                .append(LIST.getFormattedImport())
                .append(getImportsIdLine(tableDTO.getColumns()))
                .append("\n");
@@ -61,8 +61,8 @@ public class ServiceGenerator extends BaseGenerator {
                 tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), tableDTO.getTable(), propertyDTO.getPersistDTOSuffix(),
                 objectNameLowerCase, propertyDTO.getPersistDTOSuffix());
 
-        String methodFindByIdName = "\t%s findById(%s id);\n".formatted(
-                tableDTO.getTable(), tableDTO.getIdType());
+        String methodFindByIdName = "\t%s%s findById(%s id);\n".formatted(
+                tableDTO.getTable(), propertyDTO.getEntitySuffix(), tableDTO.getIdType());
 
         String methodFindByIdDTOName = "\t%s%s findByIdDTO(%s id);\n".formatted(
                 tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), tableDTO.getIdType());

@@ -20,8 +20,9 @@ public class RepositoryGenerator extends BaseGenerator {
 
     private String getRepositoryCode() {
         StringBuilder code = new StringBuilder();
-        String interfaceName = "public interface %s%s extends JpaRepository<%s, %s> {\n}".formatted(
-                tableDTO.getTable(), propertyDTO.getRepositorySuffix(), tableDTO.getTable(), tableDTO.getIdType());
+        String interfaceName = "public interface %s%s extends JpaRepository<%s%s, %s> {\n}".formatted(
+                tableDTO.getTable(), propertyDTO.getRepositorySuffix(), tableDTO.getTable(),
+                propertyDTO.getEntitySuffix(), tableDTO.getIdType());
 
         code.append(getPackageName(propertyDTO.getUrlProject(), propertyDTO.getRepositoryPath()))
             .append(getImports(tableDTO))
@@ -39,7 +40,7 @@ public class RepositoryGenerator extends BaseGenerator {
                .append(REPOSITORY.getFormattedImport())
                .append("import ")
                .append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getEntityPath())))
-               .append(".").append(tableDTO.getTable()).append(";\n");
+               .append(".").append(tableDTO.getTable()).append(propertyDTO.getEntitySuffix()).append(";\n");
         return imports.toString();
     }
 }

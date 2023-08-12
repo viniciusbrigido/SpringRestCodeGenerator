@@ -178,8 +178,7 @@ public class CodeGeneratorDialog extends DialogWrapper {
     }
 
     private void showExtraSettingsDialog() {
-        ExtraSettingsDialog extraSettingsDialog = new ExtraSettingsDialog(this);
-        extraSettingsDialog.show();
+        new ExtraSettingsDialog(this).show();
     }
 
     public void setExtraSettings(PropertyDTO propertyDTOExtraSettings) {

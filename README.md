@@ -76,21 +76,22 @@ public class ColumnDTO {
     private Integer length;
     private Boolean primaryKey;
     private Boolean required;
+    private Boolean updatable;
     private Boolean list;
     private Boolean set;
     private Boolean unique;
-    private Boolean updatable;
     private String generationType;
     private String cardinality;
     private String enumType;
     private String mappedBy;
     private String orderBy;
+    private String cascadeType;
 }
 ```
 
-`table:` Nome da entidade (deve ser camelCase e iniciar com letra Maiúscula).
+`table:` Nome da entidade (deve ser camel case e iniciar com letra Maiúscula).
 
-`name:` Nome da coluna (deve ser camelCase). No banco de dados, será convertido para snake_case, seguindo as boas práticas de nomenclatura de banco.
+`name:` Nome da coluna (deve ser camel case). No banco de dados, será convertido para snake case, seguindo as boas práticas de nomenclatura de banco.
 
 `type:` Tipo da coluna (deve ser o exato nome da propriedade/objeto, como String, Integer, Venda, etc.).
 
@@ -100,23 +101,26 @@ public class ColumnDTO {
 
 `required (opcional, default false):` Indica que a coluna é obrigatória ao cadastrar. Será adicionada a anotação `@NotNull` no DTO de persistência para garantir que o usuário informe o valor.
 
+`updatable (opcional, default true):` Indica que a coluna pode ser atualizada. Será criado um DTO específico para atualização. Caso nenhuma propriedade possa ser atualizada, o DTO e o método de atualização correspondente não serão gerados.
+
 `list (opcional, default false):` Indica que a coluna será uma lista.
 
 `set (opcional, default false):` Indica que a coluna será uma set.
 
 `unique (opcional, default false):` Indica que a coluna terá a Constraint unique.
 
-`updatable (opcional, default true):` Indica que a coluna pode ser atualizada. Será criado um DTO específico para atualização. Caso nenhuma propriedade possa ser atualizada, o DTO e o método de atualização correspondente não serão gerados.
+`generationType (opcional, case insensitive):` Indica o tipo de geração da coluna que contém a anotação `@GeneratedValue`. Pode ser um dos seguintes valores: `Table`, `Sequence`, `Identity`, `UUID` ou `Auto`.
 
 `cardinality (opcional, case insensitive):` Indica o tipo de cardinalidade da coluna. Pode ser um dos seguintes valores: `OneToMany`, `ManyToOne`, `OneToOne` ou `ManyToMany`.
-
-`generationType (opcional, case insensitive):` Indica o tipo de geração da coluna que contém a anotação `@GeneratedValue`. Pode ser um dos seguintes valores: `Table`, `Sequence`, `Identity`, `UUID` ou `Auto`.
 
 `enumType (opcional, case insensitive, default STRING):` Indica a forma que a coluna de enum será persistida. Pode ser um dos seguintes valores: `String` ou `Ordinal`.
 
 `mappedBy (opcional, case sensitive):` Usado em relacionamentos bidirecionais no JPA. Serve para indicar que o controle do relacionamento está no lado oposto da associação.
 
 `orderBy (opcional, case sensitive):` Usado para especificar a ordenação dos elementos em uma coleção mapeada em uma entidade JPA, definindo o campo pelo qual a ordenação deve ser realizada.
+
+`cascadeType (opcional, case sensitive):` Indica como as operações de persistência devem ser propagadas de uma entidade proprietária para suas entidades relacionadas. Pode ser um dos seguintes valores: `All`, `Persist`, `Merge`, `Remove`, `Refresh` ou `Detach`.
+
 
 #### Aqui está um exemplo de definição de entidade:
 
@@ -148,9 +152,9 @@ public class EnumDTO {
 }
 ```
 
-`name:` Nome do enum (deve ser camelCase).
+`name:` Nome do enum (deve ser camel case).
 
-`values:` Valores do enum (serão convertidos para snake_case e em letras maiúsculas para atender aos padrões de enum).
+`values:` Valores do enum (serão convertidos para snake case e em letras maiúsculas para atender aos padrões de enum).
 
 #### Aqui está um exemplo de definição de enum:
 
@@ -168,18 +172,61 @@ Para utilizar o gerador, siga as etapas abaixo:
 
 2- Na IDE, aperte o atalho `Ctrl + Alt + G`, abrirá a seguinte modal para configuração
 
-![Modal](modal.jpg)
-
+![Modal](./src/main/resources/images/modal.png)
 
 3 - Faça as personalizações adicionais necessárias para atender aos requisitos específicos do seu projeto e clique em `Gerar`.
 
-4- Uma breve explicação dos campos:
+### Explicação dos campos:
+
 - `Pasta Principal do Projeto:` Pasta onde os arquivos e pastas serão criados (Pasta em que contém o arquivo com o método `main`).
 - `Arquivo de Geração:` Arquivo que contém as entidades/enums a serem gerados seguindo a nomenclatura citada (`JSON`).
 - `Usar Lombok:` Determina se o projeto utiliza a biblioteca Lombok. Caso marcado, `getters`, `setters` e `construtores` das entidades e DTOs serão criados com `Lombok`.
 - `Usar Serializable:` Determina se as entidades já iniciarão implementando a interface `Serializable`.
-- `Package Entity (opcional):` Permite ao usuário identificar o pacote de entidades com um nome diferente de `entity` (por exemplo, `model`).
-- `Package Controller (opcional):` Permite ao usuário identificar o pacote de controladores com um nome diferente de `controller` (por exemplo, `resource`).
+
+### Modal de Configurações Extras
+
+Ao clicar no botão `Configurações Extras` da modal de Geração de Código, a seguinte modal abrirá: 
+
+![Configurações Extras](./src/main/resources/images/modalSettings.png)
+
+### Explicação dos campos da modal de Configurações Extras:
+
+`Prefixo da Entidade:` Define o prefixo para nomes de classes de entidade. Exemplo 'Model' ou 'Entity'.
+
+`Pasta da Entidade (default 'entity'):` Indica o diretório onde as classes de entidade serão geradas.
+
+`Prefixo do DTO de Persistência (default 'PersistDTO'):` Define o prefixo para nomes de classes DTO de persistência. Exemplo 'PersistDTO' ou 'SaveDTO'.
+
+`Pasta do DTO de Persistência (default 'dto'):` Indica o diretório onde as classes DTO de persistência serão geradas.
+
+`Prefixo do DTO de Atualização (default 'UpdateDTO'):` Define o prefixo para nomes de classes DTO de atualização. Exemplo 'UpdateDTO' ou 'EditDTO'.
+
+`Pasta do DTO de Atualização (default 'dto'):` Indica o diretório onde as classes DTO de atualização serão geradas.
+
+`Prefixo do DTO de Resposta (default 'ResponseDTO'):` Define o prefixo para nomes de classes DTO de resposta. Exemplo 'ResponseDTO' ou 'OutputDTO'.
+
+`Pasta do DTO de Resposta (default 'dto'):` Indica o diretório onde as classes DTO de resposta serão geradas.
+
+`Prefixo do Controlador (default 'Controller'):` Define o prefixo para nomes de classes de controle. Exemplo 'Controller' ou 'Resource'.
+
+`Pasta do Controlador (default 'controller'):` Indica o diretório onde as classes de controle serão geradas.
+
+`Prefixo do Serviço (default 'Service'):` Define o prefixo para nomes de classes de serviço. Exemplo 'Service' ou 'Manager'.
+
+`Pasta do Serviço: (default 'service')` Indica o diretório onde as classes de serviço serão geradas.
+
+`Prefixo da Implementação do Serviço (default 'ServiceImpl'):` Define o prefixo para nomes de classes de implementação de serviço. Exemplo 'ServiceImpl' ou 'ServiceImplementation'.
+
+`Pasta da Implementação do Serviço (default 'service/impl'):` Indica o diretório onde as classes de implementação de serviço serão geradas.
+
+`Prefixo do Repositório (default 'Repository'):` Define o prefixo para nomes de classes de repositório, como 'Repository' ou 'DataAccess'.
+
+`Pasta do Repositório: (default 'repository')` Indica o diretório onde as classes de repositório serão geradas.
+
+#### Sintaxe dos campos:
+
+- Os sufixos sempre iniciarão com letra maiúscula.
+- Caso seja necessário fazer a criação de subpastas é necessário utilizar '/' para fazer a separção. 
 
 ### Observações
 
@@ -187,6 +234,6 @@ Para utilizar o gerador, siga as etapas abaixo:
 
 - Após a geração do código, faça as devidas personalizações para atender aos requisitos específicos do seu projeto.
 
-- É recomendável revisar e testar o código gerado para garantir que tudo esteja funcionando corretamente.
+- É recomendável buildar, revisar e testar o código gerado para garantir que tudo esteja funcionando corretamente.
 
 - Caso seja definido no JSON uma entidade que já existe no código ela, será apagada e gerada novamente. 
