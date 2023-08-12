@@ -45,10 +45,14 @@ public class ServiceImplGenerator extends BaseGenerator {
                .append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getServicePath())))
                .append(".").append(tableDTO.getTable()).append(propertyDTO.getServiceSuffix()).append(";\n")
                .append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getRepositoryPath())))
-               .append(".").append(tableDTO.getTable()).append(propertyDTO.getRepositorySuffix()).append(";\n")
-               .append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getPersistDTOPath())))
-               .append(".").append(tableDTO.getTable()).append(propertyDTO.getPersistDTOSuffix()).append(";\n")
-               .append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getResponseDTOPath())))
+               .append(".").append(tableDTO.getTable()).append(propertyDTO.getRepositorySuffix()).append(";\n");
+
+        if (tableDTO.hasPersist()) {
+            imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getPersistDTOPath())))
+                   .append(".").append(tableDTO.getTable()).append(propertyDTO.getPersistDTOSuffix()).append(";\n");
+        }
+
+        imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getResponseDTOPath())))
                .append(".").append(tableDTO.getTable()).append(propertyDTO.getResponseDTOSuffix()).append(";\n");
 
         if (tableDTO.hasUpdate()) {
@@ -68,9 +72,13 @@ public class ServiceImplGenerator extends BaseGenerator {
                    .append("\tprivate ")
                    .append(tableDTO.getTable()).append(propertyDTO.getRepositorySuffix()).append(" repository;\n\n")
                    .append("\t@Autowired\n")
-                   .append("\tprivate ModelMapper modelMapper;\n\n")
-                   .append(getCreateMethod(tableDTO.getTable()))
-                   .append(getFindByIdMethod())
+                   .append("\tprivate ModelMapper modelMapper;\n\n");
+
+        if (tableDTO.hasPersist()) {
+            crudMethods.append(getCreateMethod(tableDTO.getTable()));
+        }
+
+        crudMethods.append(getFindByIdMethod())
                    .append(getFindByIdDTOMethod())
                    .append(getDeleteMethod(tableDTO.getIdType()));
 
@@ -84,6 +92,10 @@ public class ServiceImplGenerator extends BaseGenerator {
     }
 
     private String getCreateMethod(String table) {
+        if (!tableDTO.hasPersist()) {
+            return "";
+        }
+
         StringBuilder createMethod = new StringBuilder();
         String objectNameLowerCase = lowerCaseFirstLetter(table);
         String methodName = "\tpublic %s%s create(%s%s %s%s) {\n".formatted(

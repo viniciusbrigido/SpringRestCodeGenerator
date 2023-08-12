@@ -34,9 +34,12 @@ public class ServiceGenerator extends BaseGenerator {
 
     private String getImports() {
         StringBuilder imports = new StringBuilder();
-        imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getPersistDTOPath())))
-               .append(".").append(tableDTO.getTable()).append(propertyDTO.getPersistDTOSuffix()).append(";\n")
-               .append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getResponseDTOPath())))
+        if (tableDTO.hasPersist()) {
+            imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getPersistDTOPath())))
+                   .append(".").append(tableDTO.getTable()).append(propertyDTO.getPersistDTOSuffix()).append(";\n");
+        }
+
+        imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getResponseDTOPath())))
                .append(".").append(tableDTO.getTable()).append(propertyDTO.getResponseDTOSuffix()).append(";\n");
 
         if (tableDTO.hasUpdate()) {
@@ -69,8 +72,11 @@ public class ServiceGenerator extends BaseGenerator {
 
         String methodDeleteName = "\tvoid delete(%s id);\n".formatted(tableDTO.getIdType());
 
-        crudMethods.append(methodCreateName)
-                   .append(methodFindByIdName)
+        if (tableDTO.hasPersist()) {
+            crudMethods.append(methodCreateName);
+        }
+
+        crudMethods.append(methodFindByIdName)
                    .append(methodFindByIdDTOName)
                    .append(methodDeleteName);
 

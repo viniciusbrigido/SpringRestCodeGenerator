@@ -16,6 +16,9 @@ public class PersistDTOGenerator extends BaseGenerator {
     private TableDTO tableDTO;
 
     public void create(PropertyDTO propertyDTO, TableDTO tableDTO, Map<String, String> entitiesId, List<String> enums) throws IOException {
+        if (!tableDTO.hasPersist()) {
+            return;
+        }
         this.propertyDTO = propertyDTO;
         this.tableDTO = tableDTO;
 
@@ -48,10 +51,6 @@ public class PersistDTOGenerator extends BaseGenerator {
     }
 
     private String getFieldCode(ColumnDTO columnDTO, Map<String, String> entitiesId) {
-        if (columnDTO.isCollection() || columnDTO.isPrimaryKey()) {
-            return "";
-        }
-
         String required = columnDTO.isRequired() ? "\t@NotNull\n" : "";
 
         if (columnDTO.hasCardinality()) {

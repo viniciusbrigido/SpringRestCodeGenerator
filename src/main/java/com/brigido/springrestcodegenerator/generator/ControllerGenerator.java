@@ -42,10 +42,14 @@ public class ControllerGenerator extends BaseGenerator {
                .append(RESPONSE_ENTITY.getFormattedImport())
                .append(LIST.getFormattedImport())
                .append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getServicePath())))
-               .append(".").append(tableDTO.getTable()).append(propertyDTO.getServiceSuffix()).append(";\n")
-               .append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getPersistDTOPath())))
-               .append(".").append(tableDTO.getTable()).append(propertyDTO.getPersistDTOSuffix()).append(";\n")
-               .append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getResponseDTOPath())))
+               .append(".").append(tableDTO.getTable()).append(propertyDTO.getServiceSuffix()).append(";\n");
+
+        if (tableDTO.hasPersist()) {
+            imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getPersistDTOPath())))
+                   .append(".").append(tableDTO.getTable()).append(propertyDTO.getPersistDTOSuffix()).append(";\n");
+        }
+
+        imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getResponseDTOPath())))
                .append(".").append(tableDTO.getTable()).append(propertyDTO.getResponseDTOSuffix()).append(";\n");
 
         if (tableDTO.hasUpdate()) {
@@ -78,6 +82,10 @@ public class ControllerGenerator extends BaseGenerator {
     }
 
     private String getCreateMethod(String table) {
+        if (!tableDTO.hasPersist()) {
+            return "";
+        }
+
         StringBuilder createMethod = new StringBuilder();
         String objectNameLowerCase = lowerCaseFirstLetter(table);
         String methodName = "\tpublic ResponseEntity<%s%s> create(@RequestBody %s%s %s%s) {\n".formatted(

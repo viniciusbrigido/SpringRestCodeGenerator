@@ -33,12 +33,20 @@ public class TableDTO {
     }
 
     public List<ColumnDTO> getColumnsPersist() {
-        return columns.stream().filter(columnDTO -> !columnDTO.isPrimaryKey()).collect(toList());
+        return columns.stream()
+                .filter(columnDTO -> !columnDTO.isPrimaryKey() && !columnDTO.isCollection())
+                .collect(toList());
     }
 
     public List<ColumnDTO> getColumnsUpdate() {
         return columns.stream()
                 .filter(columnDTO -> (columnDTO.isUpdatable() || columnDTO.isPrimaryKey()) && !columnDTO.hasCardinality())
+                .collect(toList());
+    }
+
+    public List<ColumnDTO> getColumnsResponse() {
+        return columns.stream()
+                .filter(columnDTO -> !columnDTO.hasCardinality())
                 .collect(toList());
     }
 
@@ -51,6 +59,10 @@ public class TableDTO {
     public boolean hasUpdate() {
         return columns.stream()
                 .anyMatch(column -> column.isUpdatable() && !column.hasCardinality() && !column.isPrimaryKey());
+    }
+
+    public boolean hasPersist() {
+        return !getColumnsPersist().isEmpty();
     }
 
     public boolean hasRequired() {
