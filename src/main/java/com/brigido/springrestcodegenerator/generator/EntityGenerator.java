@@ -33,8 +33,8 @@ public class EntityGenerator extends BaseGenerator {
             .append(getHeader())
             .append(className)
             .append(getColumns(enums))
-            .append(getConstructors(propertyDTO.isUseLombok(), tableDTO, ""))
-            .append(getGettersSetters(propertyDTO.isUseLombok(), tableDTO))
+            .append(getConstructors(propertyDTO.isUseLombok(), tableDTO.getTable(), tableDTO.getColumns(), propertyDTO.getEntitySuffix()))
+            .append(getGettersSetters(propertyDTO.isUseLombok(), tableDTO.getColumns()))
             .append(getUpdateMethod())
             .append("}");
         return code.toString();

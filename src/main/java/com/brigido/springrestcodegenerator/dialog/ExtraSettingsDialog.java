@@ -10,6 +10,7 @@ import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import static java.util.Objects.*;
 
 public class ExtraSettingsDialog extends DialogWrapper {
@@ -46,10 +47,16 @@ public class ExtraSettingsDialog extends DialogWrapper {
     public ExtraSettingsDialog(CodeGeneratorDialog codeGeneratorDialog) {
         super(true);
         this.codeGeneratorDialog = codeGeneratorDialog;
-        setOKButtonText("Salvar");
-        setCancelButtonText("Sair");
+        setOKButtonText("Salvar [F2]");
+        setCancelButtonText("Sair [Esc]");
         setTitle(TITLE);
         init();
+
+        getRootPane().registerKeyboardAction(
+                e -> doOKAction(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW
+        );
     }
 
     @Nullable

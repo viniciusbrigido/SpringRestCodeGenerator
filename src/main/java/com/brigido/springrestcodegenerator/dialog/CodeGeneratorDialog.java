@@ -12,6 +12,7 @@ import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.FileNotFoundException;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import static java.util.Objects.*;
@@ -22,17 +23,23 @@ public class CodeGeneratorDialog extends DialogWrapper {
     
     private JBTextField urlProject;
     private JBTextField pathClass;
-    private JBCheckBox cbUseLombok;
-    private JBCheckBox cbUseSerializable;
+    private JBCheckBox useLombok;
+    private JBCheckBox useSerializable;
 
     private PropertyDTO propertyDTO;
 
     public CodeGeneratorDialog() {
         super(true);
         setTitle(TITLE);
-        setOKButtonText("Gerar");
-        setCancelButtonText("Sair");
+        setOKButtonText("Gerar [F2]");
+        setCancelButtonText("Sair [Esc]");
         init();
+
+        getRootPane().registerKeyboardAction(
+                e -> doOKAction(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW
+        );
     }
 
     @Nullable
@@ -48,6 +55,7 @@ public class CodeGeneratorDialog extends DialogWrapper {
         gbc.insets = JBUI.insets(5);
 
         urlProject = new JBTextField();
+        urlProject.setEnabled(false);
         panel.add(new JLabel("Pasta Principal do Projeto:*"), gbc);
         gbc.gridy++;
         panel.add(urlProject, gbc);
@@ -66,6 +74,7 @@ public class CodeGeneratorDialog extends DialogWrapper {
 
         gbc.gridy++;
         pathClass = new JBTextField();
+        pathClass.setEnabled(false);
         panel.add(new JLabel("Arquivo de Geração:*"), gbc);
         gbc.gridy++;
         panel.add(pathClass, gbc);
@@ -89,10 +98,10 @@ public class CodeGeneratorDialog extends DialogWrapper {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JPanel checkboxPanel = new JPanel(new GridLayout(1, 2));
-        cbUseLombok = new JBCheckBox("Usar Lombok", true);
-        cbUseSerializable = new JBCheckBox("Usar Serializable");
-        checkboxPanel.add(cbUseLombok);
-        checkboxPanel.add(cbUseSerializable);
+        useLombok = new JBCheckBox("Usar Lombok", true);
+        useSerializable = new JBCheckBox("Usar Serializable");
+        checkboxPanel.add(useLombok);
+        checkboxPanel.add(useSerializable);
         panel.add(checkboxPanel, gbc);
 
         gbc.gridy++;
@@ -141,8 +150,8 @@ public class CodeGeneratorDialog extends DialogWrapper {
             propertyDTO = new PropertyDTO();
         }
 
-        propertyDTO.setUseLombok(cbUseLombok.isSelected());
-        propertyDTO.setUseSerializable(cbUseSerializable.isSelected());
+        propertyDTO.setUseLombok(useLombok.isSelected());
+        propertyDTO.setUseSerializable(useSerializable.isSelected());
 
         propertyDTO.setUrlProject(urlProject.getText());
         propertyDTO.setPathClass(pathClass.getText());
@@ -150,20 +159,13 @@ public class CodeGeneratorDialog extends DialogWrapper {
         return propertyDTO;
     }
 
-    private String getPackageName(JBTextField textField, String defaultValue) {
-        if (nonNull(textField) && nonNull(textField.getText()) && !textField.getText().isEmpty()) {
-            return textField.getText();
-        }
-        return defaultValue;
-    }
-
     private void loadProperties() {
         propertyDTO = new CodeGeneratorSettings().getPropertyDTO();
         if (isNull(propertyDTO)) {
             return;
         }
-        cbUseLombok.setSelected(propertyDTO.isUseLombok());
-        cbUseSerializable.setSelected(propertyDTO.isUseSerializable());
+        useLombok.setSelected(propertyDTO.isUseLombok());
+        useSerializable.setSelected(propertyDTO.isUseSerializable());
 
         urlProject.setText(propertyDTO.getUrlProject());
         pathClass.setText(propertyDTO.getPathClass());

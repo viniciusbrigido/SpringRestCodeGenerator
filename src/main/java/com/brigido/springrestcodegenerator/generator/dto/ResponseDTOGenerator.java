@@ -29,8 +29,8 @@ public class ResponseDTOGenerator extends BaseGenerator {
             .append(getLombokHeader(propertyDTO.isUseLombok()))
             .append(className)
             .append(getColumns())
-            .append(getConstructors(propertyDTO.isUseLombok(), tableDTO, propertyDTO.getResponseDTOSuffix()))
-            .append(getGettersSetters(propertyDTO.isUseLombok(), tableDTO))
+            .append(getConstructors(propertyDTO.isUseLombok(), tableDTO.getTable(), tableDTO.getColumnsResponse(), propertyDTO.getResponseDTOSuffix()))
+            .append(getGettersSetters(propertyDTO.isUseLombok(), tableDTO.getColumnsResponse()))
             .append("}");
 
         return code.toString();

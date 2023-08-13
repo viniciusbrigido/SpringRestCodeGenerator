@@ -30,8 +30,8 @@ public class UpdateDTOGenerator extends BaseGenerator {
             .append(getLombokHeader(propertyDTO.isUseLombok()))
             .append(className)
             .append(getColumns())
-            .append(getConstructors(propertyDTO.isUseLombok(), tableDTO, propertyDTO.getUpdateDTOSuffix()))
-            .append(getGettersSetters(propertyDTO.isUseLombok(), tableDTO))
+            .append(getConstructors(propertyDTO.isUseLombok(), tableDTO.getTable(), tableDTO.getColumnsUpdate(), propertyDTO.getUpdateDTOSuffix()))
+            .append(getGettersSetters(propertyDTO.isUseLombok(), tableDTO.getColumnsUpdate()))
             .append("}");
 
         return code.toString();

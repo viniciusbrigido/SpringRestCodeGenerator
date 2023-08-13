@@ -35,8 +35,8 @@ public class PersistDTOGenerator extends BaseGenerator {
             .append(getLombokHeader(propertyDTO.isUseLombok()))
             .append(className)
             .append(getColumns(entitiesId))
-            .append(getConstructors(propertyDTO.isUseLombok(), tableDTO, propertyDTO.getPersistDTOSuffix()))
-            .append(getGettersSetters(propertyDTO.isUseLombok(), tableDTO))
+            .append(getConstructors(propertyDTO.isUseLombok(), tableDTO.getTable(), tableDTO.getColumnsPersist(), propertyDTO.getPersistDTOSuffix()))
+            .append(getGettersSetters(propertyDTO.isUseLombok(), tableDTO.getColumnsPersist()))
             .append("}");
 
         return code.toString();

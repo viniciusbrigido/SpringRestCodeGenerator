@@ -139,26 +139,26 @@ public abstract class BaseGenerator {
         return SERIALIZABLE.getFormattedImport();
     }
 
-    public String getConstructors(boolean isUseLombok, TableDTO tableDTO, String suffix) {
+    public String getConstructors(boolean isUseLombok, String table, List<ColumnDTO> columns, String suffix) {
         if (isUseLombok) {
             return "";
         }
 
         StringBuilder constructors = new StringBuilder();
 
-        String emptyConstructor = "\tpublic %s%s() {\n\t}\n\n".formatted(tableDTO.getTable(), suffix);
+        String emptyConstructor = "\tpublic %s%s() {\n\t}\n\n".formatted(table, suffix);
         constructors.append(emptyConstructor);
 
         List<String> properties = new ArrayList<>();
         List<String> setterLines = new ArrayList<>();
-        for (ColumnDTO columnDTO : tableDTO.getColumns()) {
+        for (ColumnDTO columnDTO : columns) {
             String typeFormatted = columnDTO.isCollection() ? "%s<%s>"
                     .formatted(columnDTO.isList() ? LIST.getName() : SET.getName(), columnDTO.getType()) : columnDTO.getType();
             properties.add("%s %s".formatted(typeFormatted, columnDTO.getName()));
             setterLines.add("\t\tthis.%s = %s;\n".formatted(columnDTO.getName(), columnDTO.getName()));
         }
 
-        String fullConstructor = "\tpublic %s(%s) {\n".formatted(tableDTO.getTable(), join(", ", properties));
+        String fullConstructor = "\tpublic %s%s(%s) {\n".formatted(table, suffix, join(", ", properties));
         constructors.append(fullConstructor);
         setterLines.forEach(constructors::append);
         constructors.append("\t}\n\n");
@@ -166,13 +166,13 @@ public abstract class BaseGenerator {
         return constructors.toString();
     }
 
-    public String getGettersSetters(boolean isUseLombok, TableDTO tableDTO) {
+    public String getGettersSetters(boolean isUseLombok, List<ColumnDTO> columns) {
         if (isUseLombok) {
             return "";
         }
 
         StringBuilder gettersSetters = new StringBuilder();
-        for (ColumnDTO columnDTO : tableDTO.getColumns()) {
+        for (ColumnDTO columnDTO : columns) {
             String typeFormatted = columnDTO.isCollection() ? "%s<%s>".formatted(columnDTO.isList() ? LIST.getName() : SET.getName(), columnDTO.getType()) : columnDTO.getType();
             String methodGetName = "\tpublic %s get%s() {\n".formatted(typeFormatted, capitalizeFirstLetter(columnDTO.getName()));
             gettersSetters.append(methodGetName)
