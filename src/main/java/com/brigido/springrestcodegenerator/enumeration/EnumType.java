@@ -3,6 +3,7 @@ package com.brigido.springrestcodegenerator.enumeration;
 import static java.util.Arrays.stream;
 
 public enum EnumType {
+
     ORDINAL, STRING;
 
     public static String getEnumType(String enumTypeString) {

@@ -98,6 +98,7 @@ public class EntityGenerator extends BaseGenerator {
 
         fieldCode.append(getCardinality(columnDTO))
                  .append(getOrderBy(columnDTO))
+                 .append(getTemporalType(columnDTO))
                  .append(getColumnName(columnDTO))
                  .append(propertyName)
                  .append("\n");
@@ -124,6 +125,13 @@ public class EntityGenerator extends BaseGenerator {
             return "";
         }
         return "\t@OrderBy(\"%s\")\n".formatted(columnDTO.getOrderBy());
+    }
+
+    private String getTemporalType(ColumnDTO columnDTO) {
+        if (!columnDTO.hasTemporalType()) {
+            return "";
+        }
+        return TemporalType.getTemporalType(columnDTO.getTemporalType());
     }
 
     private String getColumnName(ColumnDTO columnDTO) {

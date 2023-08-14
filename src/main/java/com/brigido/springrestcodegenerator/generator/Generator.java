@@ -95,6 +95,10 @@ public class Generator {
                     throw new SyntaxErrorException("O tipo de cascata da coluna %s da entidade %s é inválido."
                             .formatted(columnDTO.getName(), tableDTO.getTable()));
                 }
+                if (columnDTO.hasTemporalType() && TemporalType.getTemporalType(columnDTO.getTemporalType()).isEmpty()) {
+                    throw new SyntaxErrorException("O tipo de tempo da coluna %s da entidade %s é inválido."
+                            .formatted(columnDTO.getName(), tableDTO.getTable()));
+                }
             }
         }
     }

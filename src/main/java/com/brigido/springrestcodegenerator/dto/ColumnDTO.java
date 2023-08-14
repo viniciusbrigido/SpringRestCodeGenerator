@@ -19,13 +19,14 @@ public class ColumnDTO {
     private String mappedBy;
     private String orderBy;
     private String cascadeType;
+    private String temporalType;
 
     public ColumnDTO() {
     }
 
     public ColumnDTO(String name, String type, Integer length, Boolean primaryKey, Boolean required, Boolean updatable,
                      Boolean list, Boolean set, Boolean unique, String generationType, String cardinality, String enumType,
-                     String mappedBy, String orderBy, String cascadeType) {
+                     String mappedBy, String orderBy, String cascadeType, String temporalType) {
         this.name = name;
         this.type = type;
         this.length = length;
@@ -41,6 +42,7 @@ public class ColumnDTO {
         this.mappedBy = mappedBy;
         this.orderBy = orderBy;
         this.cascadeType = cascadeType;
+        this.temporalType = temporalType;
     }
 
     public String getName() {
@@ -163,6 +165,14 @@ public class ColumnDTO {
         this.cascadeType = cascadeType;
     }
 
+    public String getTemporalType() {
+        return temporalType;
+    }
+
+    public void setTemporalType(String temporalType) {
+        this.temporalType = temporalType;
+    }
+
     public boolean hasCardinality() {
         return nonNull(cardinality) && !cardinality.isEmpty();
     }
@@ -185,6 +195,10 @@ public class ColumnDTO {
 
     public boolean hasCascadeType() {
         return nonNull(cascadeType) && !cascadeType.isEmpty();
+    }
+
+    public boolean hasTemporalType() {
+        return nonNull(temporalType) && !temporalType.isEmpty();
     }
 
     public boolean isCollection() {

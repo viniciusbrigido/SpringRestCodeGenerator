@@ -86,6 +86,7 @@ public class ColumnDTO {
     private String mappedBy;
     private String orderBy;
     private String cascadeType;
+    private String temporal;
 }
 ```
 
@@ -119,8 +120,9 @@ public class ColumnDTO {
 
 `orderBy (opcional, case sensitive):` Usado para especificar a ordenação dos elementos em uma coleção mapeada em uma entidade JPA, definindo o campo pelo qual a ordenação deve ser realizada.
 
-`cascadeType (opcional, case sensitive):` Indica como as operações de persistência devem ser propagadas de uma entidade proprietária para suas entidades relacionadas. Pode ser um dos seguintes valores: `All`, `Persist`, `Merge`, `Remove`, `Refresh` ou `Detach`.
+`cascadeType (opcional, case insensitive):` Indica como as operações de persistência devem ser propagadas de uma entidade proprietária para suas entidades relacionadas. Pode ser um dos seguintes valores: `All`, `Persist`, `Merge`, `Remove`, `Refresh` ou `Detach`.
 
+`temporalType (opcional, case insensitive):` Indica como campos de data e hora em uma entidade se relacionam com as colunas correspondentes no banco de dados. Pode ser um dos seguintes valores: `Date`, `Time` ou `Timestamp`.
 
 #### Aqui está um exemplo de definição de entidade:
 
