@@ -4,9 +4,7 @@ import com.brigido.springrestcodegenerator.dto.*;
 import com.brigido.springrestcodegenerator.generator.BaseGenerator;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
-import static com.brigido.springrestcodegenerator.util.StringUtil.*;
 
 public class PersistDTOGenerator extends BaseGenerator {
 
