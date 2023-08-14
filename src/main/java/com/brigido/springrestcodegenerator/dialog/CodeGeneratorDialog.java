@@ -15,12 +15,12 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.FileNotFoundException;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import static com.brigido.springrestcodegenerator.util.ConstUtil.*;
+import static com.brigido.springrestcodegenerator.util.MessageUtil.*;
 import static java.util.Objects.*;
 
 public class CodeGeneratorDialog extends DialogWrapper {
 
-    public static final String TITLE = "Code Generator";
-    
     private JBTextField urlProject;
     private JBTextField pathClass;
     private JBCheckBox useLombok;
@@ -30,7 +30,7 @@ public class CodeGeneratorDialog extends DialogWrapper {
 
     public CodeGeneratorDialog() {
         super(true);
-        setTitle(TITLE);
+        setTitle(TITLE_CODE_GENERATOR);
         setOKButtonText("Gerar [F2]");
         setCancelButtonText("Sair [Esc]");
         init();
@@ -117,13 +117,13 @@ public class CodeGeneratorDialog extends DialogWrapper {
     @Override
     protected void doOKAction() {
         if (urlProject.getText().isEmpty()) {
-            Messages.showMessageDialog("Preencha o campo de Pasta Principal do Projeto.", TITLE, Messages.getErrorIcon());
+            showErrorMessageDialog("Preencha o campo de Pasta Principal do Projeto.");
             urlProject.requestFocus();
             return;
         }
 
         if (pathClass.getText().isEmpty()) {
-            Messages.showMessageDialog("Preencha o campo de Arquivo de Geração.", TITLE, Messages.getErrorIcon());
+            showErrorMessageDialog("Preencha o campo de Arquivo de Geração.");
             pathClass.requestFocus();
             return;
         }
@@ -132,16 +132,16 @@ public class CodeGeneratorDialog extends DialogWrapper {
         try {
             new Generator().generate(getPropertyDTO());
         } catch (FileNotFoundException | SyntaxErrorException e) {
-            Messages.showMessageDialog(e.getMessage(), TITLE, Messages.getErrorIcon());
+            showErrorMessageDialog(e.getMessage());
             return;
         } catch (Exception e) {
-            Messages.showMessageDialog("Erro de sintaxe na geração do(s) arquivo(s).", TITLE, Messages.getErrorIcon());
+            showErrorMessageDialog("Erro de sintaxe na geração do(s) arquivo(s).");
             return;
         }
 
         super.doOKAction();
 
-        Messages.showMessageDialog("Código gerado!", TITLE, Messages.getInformationIcon());
+        showInformationMessageDialog("Código gerado!");
         reloadFiles();
     }
 

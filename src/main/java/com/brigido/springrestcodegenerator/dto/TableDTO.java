@@ -66,7 +66,7 @@ public class TableDTO {
     }
 
     public boolean hasRequired() {
-        return columns.stream().anyMatch(ColumnDTO::isRequired);
+        return getColumnsPersist().stream().anyMatch(ColumnDTO::isRequired);
     }
 
     public String getIdType() {

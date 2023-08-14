@@ -11,11 +11,10 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import static com.brigido.springrestcodegenerator.util.ConstUtil.*;
 import static java.util.Objects.*;
 
 public class ExtraSettingsDialog extends DialogWrapper {
-
-    public static final String TITLE = "Configurações Extras";
 
     private PropertyDTO propertyDTO;
     private CodeGeneratorDialog codeGeneratorDialog;
@@ -49,7 +48,7 @@ public class ExtraSettingsDialog extends DialogWrapper {
         this.codeGeneratorDialog = codeGeneratorDialog;
         setOKButtonText("Salvar [F2]");
         setCancelButtonText("Sair [Esc]");
-        setTitle(TITLE);
+        setTitle(TITLE_EXTRA_SETTINGS);
         init();
 
         getRootPane().registerKeyboardAction(
