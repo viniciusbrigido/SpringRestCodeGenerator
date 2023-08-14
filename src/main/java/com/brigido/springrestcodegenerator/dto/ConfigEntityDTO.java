@@ -10,13 +10,14 @@ public class ConfigEntityDTO {
     private boolean containsLocalDateTime;
     private boolean containsList;
     private boolean containsSet;
+    private boolean containsCalendar;
 
     public ConfigEntityDTO() {
     }
 
     public ConfigEntityDTO(boolean containsDate, boolean containsUUID, boolean containsBigInteger, boolean containsBigDecimal,
                            boolean containsLocalDate, boolean containsLocalDateTime, boolean containsList,
-                           boolean containsSet) {
+                           boolean containsSet, boolean containsCalendar) {
         this.containsDate = containsDate;
         this.containsUUID = containsUUID;
         this.containsBigInteger = containsBigInteger;
@@ -25,6 +26,7 @@ public class ConfigEntityDTO {
         this.containsLocalDateTime = containsLocalDateTime;
         this.containsList = containsList;
         this.containsSet = containsSet;
+        this.containsCalendar = containsCalendar;
     }
 
     public boolean isContainsDate() {
@@ -89,5 +91,13 @@ public class ConfigEntityDTO {
 
     public void setContainsSet(boolean containsSet) {
         this.containsSet = containsSet;
+    }
+
+    public boolean isContainsCalendar() {
+        return containsCalendar;
+    }
+
+    public void setContainsCalendar(boolean containsCalendar) {
+        this.containsCalendar = containsCalendar;
     }
 }

@@ -67,6 +67,7 @@ public abstract class BaseGenerator {
             case LOCAL_DATE_TIME -> configEntityDTO.isContainsLocalDateTime();
             case LIST -> configEntityDTO.isContainsList();
             case SET -> configEntityDTO.isContainsSet();
+            case CALENDAR -> configEntityDTO.isContainsCalendar();
             default -> false;
         };
     }
@@ -100,6 +101,9 @@ public abstract class BaseGenerator {
             }
             if (type.equals(LOCAL_DATE_TIME.getName())) {
                 configEntityDTO.setContainsLocalDateTime(true);
+            }
+            if (type.equals(CALENDAR.getName())) {
+                configEntityDTO.setContainsCalendar(true);
             }
             if (columnDTO.isList()) {
                 configEntityDTO.setContainsList(true);

@@ -1,78 +1,66 @@
 package com.brigido.springrestcodegenerator.generator.dto;
 
 import com.brigido.springrestcodegenerator.dto.*;
-import com.brigido.springrestcodegenerator.enumeration.Imports;
 import com.brigido.springrestcodegenerator.generator.BaseGenerator;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
 import static com.brigido.springrestcodegenerator.util.StringUtil.*;
-import static java.util.Arrays.stream;
 
 public class PersistDTOGenerator extends BaseGenerator {
 
     private PropertyDTO propertyDTO;
     private TableDTO tableDTO;
+    private Map<String, String> entitiesId;
 
     public void create(PropertyDTO propertyDTO, TableDTO tableDTO, Map<String, String> entitiesId, List<String> enums) throws IOException {
-        if (!tableDTO.hasPersist()) {
+        if (!tableDTO.hasPersist(entitiesId)) {
             return;
         }
         this.propertyDTO = propertyDTO;
         this.tableDTO = tableDTO;
+        this.entitiesId = entitiesId;
 
         String fileName = tableDTO.getTable() + propertyDTO.getPersistDTOSuffix() + ".java";
-        createFile(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getPersistDTOPath()), fileName, getResponseDTOCode(entitiesId, enums));
+        createFile(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getPersistDTOPath()), fileName, getResponseDTOCode(enums));
     }
 
-    private String getResponseDTOCode(Map<String, String> entitiesId, List<String> enums) {
+    private String getResponseDTOCode(List<String> enums) {
         StringBuilder code = new StringBuilder();
         String className = "public class %s%s {\n\n".formatted(tableDTO.getTable(), propertyDTO.getPersistDTOSuffix());
 
         code.append(getPackageName(propertyDTO.getUrlProject(), propertyDTO.getPersistDTOPath()))
-            .append(getImports(entitiesId, enums))
+            .append(getImports(enums))
             .append(getLombokHeader(propertyDTO.isUseLombok()))
             .append(className)
-            .append(getColumns(entitiesId))
-            .append(getConstructors(propertyDTO.isUseLombok(), tableDTO.getTable(), tableDTO.getColumnsPersist(), propertyDTO.getPersistDTOSuffix()))
-            .append(getGettersSetters(propertyDTO.isUseLombok(), tableDTO.getColumnsPersist()))
+            .append(getColumns())
+            .append(getConstructors(propertyDTO.isUseLombok(), tableDTO.getTable(), tableDTO.getColumnsPersist(entitiesId), propertyDTO.getPersistDTOSuffix()))
+            .append(getGettersSetters(propertyDTO.isUseLombok(), tableDTO.getColumnsPersist(entitiesId)))
             .append("}");
 
         return code.toString();
     }
 
-    private String getColumns(Map<String, String> entitiesId) {
+    private String getColumns() {
         StringBuilder columns = new StringBuilder();
-        for (ColumnDTO columnDTO : tableDTO.getColumnsPersist()) {
-            columns.append(getFieldCode(columnDTO, entitiesId));
+        for (ColumnDTO columnDTO : tableDTO.getColumnsPersist(entitiesId)) {
+            columns.append(getFieldCode(columnDTO));
         }
         return columns.toString();
     }
 
-    private String getFieldCode(ColumnDTO columnDTO, Map<String, String> entitiesId) {
+    private String getFieldCode(ColumnDTO columnDTO) {
         String required = columnDTO.isRequired() ? "\t@NotNull\n" : "";
-
-        if (columnDTO.hasCardinality()) {
-            AtomicReference<String> fieldCode = new AtomicReference<>("");
-            entitiesId.forEach((table, primaryKey) -> {
-                if (table.equals(columnDTO.getType())) {
-                    fieldCode.set("%s\tprivate %s %sId;\n\n".formatted(required, primaryKey, lowerCaseFirstLetter(table)));
-                }
-            });
-
-            return fieldCode.get();
-        }
         return "%s\tprivate %s %s;\n\n".formatted(required, columnDTO.getType(), columnDTO.getName());
     }
 
-    private String getImports(Map<String, String> entitiesId, List<String> enums) {
+    private String getImports(List<String> enums) {
         StringBuilder imports = new StringBuilder();
         imports.append(getLombokImport(propertyDTO.isUseLombok()))
-               .append(getImportsByConfigEntityDTO(tableDTO.getColumnsPersist()))
-               .append(getExternalImports(entitiesId));
+               .append(getImportsByConfigEntityDTO(tableDTO.getColumnsPersist(entitiesId)));
 
-        if (tableDTO.hasRequired()) {
+        if (tableDTO.hasRequired(entitiesId)) {
             imports.append(NOT_NULL.getFormattedImport());
         }
 
@@ -83,50 +71,5 @@ public class PersistDTOGenerator extends BaseGenerator {
 
         imports.append("\n");
         return imports.toString();
-    }
-
-    private String getExternalImports(Map<String, String> entitiesId) {
-        StringBuilder externalImports = new StringBuilder();
-        List<String> imports = new ArrayList<>();
-
-        entitiesId.forEach((table, primaryKey) -> tableDTO.getColumns().forEach(columnDTO -> {
-            if (table.equals(columnDTO.getType())) {
-                imports.add(primaryKey);
-            }
-        }));
-        List<String> distinctImports = new ArrayList<>(new HashSet<>(imports));
-        ConfigEntityDTO configEntityDTO = getConfigEntityDTOFromExternalImports(distinctImports);
-
-        stream(Imports.values())
-                .filter(importEnum -> checkImport(configEntityDTO, importEnum))
-                .map(Imports::getFormattedImport)
-                .forEach(externalImports::append);
-
-        return externalImports.toString();
-    }
-
-    public ConfigEntityDTO getConfigEntityDTOFromExternalImports(List<String> types) {
-        ConfigEntityDTO configEntityDTO = new ConfigEntityDTO();
-        for (String type : types) {
-            if (type.equals(DATE.getName())) {
-                configEntityDTO.setContainsDate(true);
-            }
-            if (type.equals(UUID.getName())) {
-                configEntityDTO.setContainsUUID(true);
-            }
-            if (type.equals(BIG_INTEGER.getName())) {
-                configEntityDTO.setContainsBigInteger(true);
-            }
-            if (type.equals(BIG_DECIMAL.getName())) {
-                configEntityDTO.setContainsBigDecimal(true);
-            }
-            if (type.equals(LOCAL_DATE.getName())) {
-                configEntityDTO.setContainsLocalDate(true);
-            }
-            if (type.equals(LOCAL_DATE_TIME.getName())) {
-                configEntityDTO.setContainsLocalDateTime(true);
-            }
-        }
-        return configEntityDTO;
     }
 }

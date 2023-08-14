@@ -24,9 +24,9 @@ public class Generator {
         for (TableDTO tableDTO : requestDTO.getTables()) {
             new EntityGenerator().create(propertyDTO, tableDTO, enums);
             new RepositoryGenerator().create(propertyDTO, tableDTO);
-            new ServiceGenerator().create(propertyDTO, tableDTO);
-            new ServiceImplGenerator().create(propertyDTO, tableDTO);
-            new ControllerGenerator().create(propertyDTO, tableDTO);
+            new ServiceGenerator().create(propertyDTO, tableDTO, entitiesId);
+            new ServiceImplGenerator().create(propertyDTO, tableDTO, entitiesId);
+            new ControllerGenerator().create(propertyDTO, tableDTO, entitiesId);
             new ResponseDTOGenerator().create(propertyDTO, tableDTO, enums);
             new PersistDTOGenerator().create(propertyDTO, tableDTO, entitiesId, enums);
             new UpdateDTOGenerator().create(propertyDTO, tableDTO, enums);

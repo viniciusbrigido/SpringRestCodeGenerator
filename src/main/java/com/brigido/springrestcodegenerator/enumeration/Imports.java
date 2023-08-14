@@ -21,6 +21,7 @@ public enum Imports {
     BIG_DECIMAL("BigDecimal", "java.math.BigDecimal"),
     LOCAL_DATE("LocalDate", "java.time.LocalDate"),
     LOCAL_DATE_TIME("LocalDateTime", "java.time.LocalDateTime"),
+    CALENDAR("Calendar", "java.util.Calendar"),
     SERIALIZABLE(null, "java.io.Serializable"),
     NOT_NULL(null, "jakarta.validation.constraints.NotNull");
 

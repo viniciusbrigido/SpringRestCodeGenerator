@@ -3,6 +3,8 @@ package com.brigido.springrestcodegenerator.generator;
 import com.brigido.springrestcodegenerator.dto.PropertyDTO;
 import com.brigido.springrestcodegenerator.dto.TableDTO;
 import java.io.IOException;
+import java.util.Map;
+
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
 import static com.brigido.springrestcodegenerator.util.StringUtil.*;
 
@@ -10,10 +12,12 @@ public class ControllerGenerator extends BaseGenerator {
 
     private PropertyDTO propertyDTO;
     private TableDTO tableDTO;
+    private Map<String, String> entitiesId;
 
-    public void create(PropertyDTO propertyDTO, TableDTO tableDTO) throws IOException {
+    public void create(PropertyDTO propertyDTO, TableDTO tableDTO, Map<String, String> entitiesId) throws IOException {
         this.propertyDTO = propertyDTO;
         this.tableDTO = tableDTO;
+        this.entitiesId = entitiesId;
 
         String fileName = tableDTO.getTable() + propertyDTO.getControllerSuffix() + ".java";
         createFile(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getControllerPath()), fileName, getControllerCode());
@@ -44,7 +48,7 @@ public class ControllerGenerator extends BaseGenerator {
                .append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getServicePath())))
                .append(".").append(tableDTO.getTable()).append(propertyDTO.getServiceSuffix()).append(";\n");
 
-        if (tableDTO.hasPersist()) {
+        if (tableDTO.hasPersist(entitiesId)) {
             imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getPersistDTOPath())))
                    .append(".").append(tableDTO.getTable()).append(propertyDTO.getPersistDTOSuffix()).append(";\n");
         }
@@ -82,7 +86,7 @@ public class ControllerGenerator extends BaseGenerator {
     }
 
     private String getCreateMethod(String table) {
-        if (!tableDTO.hasPersist()) {
+        if (!tableDTO.hasPersist(entitiesId)) {
             return "";
         }
 

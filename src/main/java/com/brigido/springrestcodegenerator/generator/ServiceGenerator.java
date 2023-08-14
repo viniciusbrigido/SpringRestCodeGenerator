@@ -3,6 +3,7 @@ package com.brigido.springrestcodegenerator.generator;
 import com.brigido.springrestcodegenerator.dto.PropertyDTO;
 import com.brigido.springrestcodegenerator.dto.TableDTO;
 import java.io.IOException;
+import java.util.Map;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
 import static com.brigido.springrestcodegenerator.util.StringUtil.*;
 
@@ -10,10 +11,12 @@ public class ServiceGenerator extends BaseGenerator {
 
     private PropertyDTO propertyDTO;
     private TableDTO tableDTO;
+    private Map<String, String> entitiesId;
 
-    public void create(PropertyDTO propertyDTO, TableDTO tableDTO) throws IOException {
+    public void create(PropertyDTO propertyDTO, TableDTO tableDTO, Map<String, String> entitiesId) throws IOException {
         this.propertyDTO = propertyDTO;
         this.tableDTO = tableDTO;
+        this.entitiesId = entitiesId;
 
         String fileName = tableDTO.getTable() + propertyDTO.getServiceSuffix() + ".java";
         createFile(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getServicePath()), fileName, getServiceCode());
@@ -34,7 +37,7 @@ public class ServiceGenerator extends BaseGenerator {
 
     private String getImports() {
         StringBuilder imports = new StringBuilder();
-        if (tableDTO.hasPersist()) {
+        if (tableDTO.hasPersist(entitiesId)) {
             imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getPersistDTOPath())))
                    .append(".").append(tableDTO.getTable()).append(propertyDTO.getPersistDTOSuffix()).append(";\n");
         }
@@ -72,7 +75,7 @@ public class ServiceGenerator extends BaseGenerator {
 
         String methodDeleteName = "\tvoid delete(%s id);\n".formatted(tableDTO.getIdType());
 
-        if (tableDTO.hasPersist()) {
+        if (tableDTO.hasPersist(entitiesId)) {
             crudMethods.append(methodCreateName);
         }
 

@@ -1,7 +1,9 @@
 package com.brigido.springrestcodegenerator.dto;
 
-import java.util.List;
+import java.util.*;
+import static com.brigido.springrestcodegenerator.util.StringUtil.lowerCaseFirstLetter;
 import static java.util.stream.Collectors.*;
+import static java.util.stream.Stream.*;
 
 public class TableDTO {
 
@@ -32,10 +34,26 @@ public class TableDTO {
         this.columns = columns;
     }
 
-    public List<ColumnDTO> getColumnsPersist() {
-        return columns.stream()
-                .filter(columnDTO -> !columnDTO.isPrimaryKey() && !columnDTO.isCollection())
-                .collect(toList());
+    public List<ColumnDTO> getColumnsPersist(Map<String, String> entitiesId) {
+        List<ColumnDTO> columnsPersist = columns.stream()
+                .filter(columnDTO -> !columnDTO.isPrimaryKey() && !columnDTO.isCollection() && !columnDTO.hasCardinality())
+                .toList();
+
+        return concat(columnsPersist.stream(), getExternalColumns(entitiesId).stream()).collect(toList());
+    }
+
+    private List<ColumnDTO> getExternalColumns(Map<String, String> entitiesId) {
+        List<ColumnDTO> externalColumns = new ArrayList<>();
+        entitiesId.forEach((table, primaryKey) -> columns.forEach(columnDTO -> {
+            if (table.equals(columnDTO.getType())) {
+                ColumnDTO column = new ColumnDTO();
+                column.setType(primaryKey);
+                column.setName(lowerCaseFirstLetter(table) + "Id");
+                externalColumns.add(column);
+            }
+        }));
+
+        return externalColumns;
     }
 
     public List<ColumnDTO> getColumnsUpdate() {
@@ -61,12 +79,12 @@ public class TableDTO {
                 .anyMatch(column -> column.isUpdatable() && !column.hasCardinality() && !column.isPrimaryKey());
     }
 
-    public boolean hasPersist() {
-        return !getColumnsPersist().isEmpty();
+    public boolean hasPersist(Map<String, String> entitiesId) {
+        return !getColumnsPersist(entitiesId).isEmpty();
     }
 
-    public boolean hasRequired() {
-        return getColumnsPersist().stream().anyMatch(ColumnDTO::isRequired);
+    public boolean hasRequired(Map<String, String> entitiesId) {
+        return getColumnsPersist(entitiesId).stream().anyMatch(ColumnDTO::isRequired);
     }
 
     public String getIdType() {
