@@ -1,6 +1,7 @@
 package com.brigido.springrestcodegenerator.dto;
 
-import java.util.List;
+import java.util.*;
+import static java.util.Optional.*;
 
 public class RequestDTO {
 
@@ -16,7 +17,7 @@ public class RequestDTO {
     }
 
     public List<TableDTO> getTables() {
-        return tables;
+        return ofNullable(tables).orElseGet(() -> tables = new ArrayList<>());
     }
 
     public void setTables(List<TableDTO> tables) {
@@ -24,7 +25,7 @@ public class RequestDTO {
     }
 
     public List<EnumDTO> getEnums() {
-        return enums;
+        return ofNullable(enums).orElseGet(() -> enums = new ArrayList<>());
     }
 
     public void setEnums(List<EnumDTO> enums) {
