@@ -58,6 +58,19 @@ public class EntityGenerator extends BaseGenerator {
                    .append(OPTIONAL.getFormattedImport());
         }
 
+        if (tableDTO.hasNotNull()) {
+            imports.append(NOT_NULL.getFormattedImport());
+        }
+        if (tableDTO.hasNotEmpty()) {
+            imports.append(NOT_EMPTY.getFormattedImport());
+        }
+        if (tableDTO.hasMin()) {
+            imports.append(MIN.getFormattedImport());
+        }
+        if (tableDTO.hasMax()) {
+            imports.append(MAX.getFormattedImport());
+        }
+
         imports.append("\n");
         return imports.toString();
     }
@@ -96,7 +109,8 @@ public class EntityGenerator extends BaseGenerator {
         String typeFormatted = columnDTO.isCollection() ? "%s<%s>".formatted(columnDTO.isList() ? LIST.getName() : SET.getName(), columnDTO.getType()) : columnDTO.getType();
         String propertyName = "\tprivate %s %s;\n".formatted(typeFormatted, columnDTO.getName());
 
-        fieldCode.append(getCardinality(columnDTO))
+        fieldCode.append(getValidations(columnDTO))
+                 .append(getCardinality(columnDTO))
                  .append(getOrderBy(columnDTO))
                  .append(getTemporalType(columnDTO))
                  .append(getColumnName(columnDTO))
@@ -167,6 +181,24 @@ public class EntityGenerator extends BaseGenerator {
             return "\t@GeneratedValue\n";
         }
         return GenerationType.getAnottation(columnDTO.getGenerationType());
+    }
+
+    private String getValidations(ColumnDTO columnDTO) {
+        StringBuilder validations = new StringBuilder();
+        if (columnDTO.isNotNull()) {
+            validations.append("\t@NotNull\n");
+        }
+        if (columnDTO.isNotEmpty()) {
+            validations.append("\t@NotEmpty\n");
+        }
+        if (nonNull(columnDTO.getMin())) {
+            validations.append("\t@Min(%s)\n".formatted(columnDTO.getMin()));
+        }
+        if (nonNull(columnDTO.getMax())) {
+            validations.append("\t@Max(%s)\n".formatted(columnDTO.getMax()));
+        }
+
+        return validations.toString();
     }
 
     private String getUpdateMethod() {

@@ -23,7 +23,10 @@ public enum Imports {
     LOCAL_DATE_TIME("LocalDateTime", "java.time.LocalDateTime"),
     CALENDAR("Calendar", "java.util.Calendar"),
     SERIALIZABLE(null, "java.io.Serializable"),
-    NOT_NULL(null, "jakarta.validation.constraints.NotNull");
+    NOT_NULL(null, "jakarta.validation.constraints.NotNull"),
+    NOT_EMPTY(null, "jakarta.validation.constraints.NotEmpty"),
+    MIN(null, "jakarta.validation.constraints.Min"),
+    MAX(null, "jakarta.validation.constraints.Max");
 
     private final String name;
     private final String importName;

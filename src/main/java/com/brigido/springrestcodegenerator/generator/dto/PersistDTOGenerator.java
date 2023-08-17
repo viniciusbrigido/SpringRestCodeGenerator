@@ -4,7 +4,6 @@ import com.brigido.springrestcodegenerator.dto.*;
 import com.brigido.springrestcodegenerator.generator.BaseGenerator;
 import java.io.IOException;
 import java.util.*;
-import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
 
 public class PersistDTOGenerator extends BaseGenerator {
 
@@ -49,18 +48,13 @@ public class PersistDTOGenerator extends BaseGenerator {
     }
 
     private String getFieldCode(ColumnDTO columnDTO) {
-        String required = columnDTO.isRequired() ? "\t@NotNull\n" : "";
-        return "%s\tprivate %s %s;\n\n".formatted(required, columnDTO.getType(), columnDTO.getName());
+        return "\tprivate %s %s;\n\n".formatted(columnDTO.getType(), columnDTO.getName());
     }
 
     private String getImports(List<String> enums) {
         StringBuilder imports = new StringBuilder();
         imports.append(getLombokImport(propertyDTO.isUseLombok()))
                .append(getImportsByConfigEntityDTO(tableDTO.getColumnsPersist(entitiesId)));
-
-        if (tableDTO.hasRequired(entitiesId)) {
-            imports.append(NOT_NULL.getFormattedImport());
-        }
 
         if (tableDTO.hasEnum(enums)) {
             imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), "enumeration")))

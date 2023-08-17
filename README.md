@@ -87,6 +87,10 @@ public class ColumnDTO {
     private String orderBy;
     private String cascadeType;
     private String temporal;
+    private Boolean notNull;
+    private Boolean notEmpty;
+    private Integer max;
+    private Integer min;
 }
 ```
 
@@ -100,7 +104,7 @@ public class ColumnDTO {
 
 `primaryKey (opcional, default false):` Indica que a coluna será a chave primária da entidade.
 
-`required (opcional, default false):` Indica que a coluna é obrigatória ao cadastrar. Será adicionada a anotação `@NotNull` no DTO de persistência para garantir que o usuário informe o valor.
+`required (opcional, default false):` Indica que a coluna é obrigatória ao cadastrar.
 
 `updatable (opcional, default true):` Indica que a coluna pode ser atualizada. Será criado um DTO específico para atualização. Caso nenhuma propriedade possa ser atualizada, o DTO e o método de atualização correspondente não serão gerados.
 
@@ -123,6 +127,14 @@ public class ColumnDTO {
 `cascadeType (opcional, case insensitive):` Indica como as operações de persistência devem ser propagadas de uma entidade proprietária para suas entidades relacionadas. Pode ser um dos seguintes valores: `All`, `Persist`, `Merge`, `Remove`, `Refresh` ou `Detach`.
 
 `temporalType (opcional, case insensitive):` Indica como campos de data e hora em uma entidade se relacionam com as colunas correspondentes no banco de dados. Pode ser um dos seguintes valores: `Date`, `Time` ou `Timestamp`.
+
+`notNull (opcional, default false):` Indica se o valor não pode ser nulo.
+
+`notEmpty (opcional, default false):` Indica se o valor não pode ser nulo e também não pode ser uma string vazia.
+
+`max (opcional):` Indica o valor máximo permitido para um valor numérico inteiro.
+
+`min (opcional):` Indica o valor mínimo permitido para um valor numérico inteiro.
 
 #### Aqui está um exemplo de definição de entidade:
 

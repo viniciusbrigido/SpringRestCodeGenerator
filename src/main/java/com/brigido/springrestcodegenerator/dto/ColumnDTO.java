@@ -20,13 +20,18 @@ public class ColumnDTO {
     private String orderBy;
     private String cascadeType;
     private String temporalType;
+    private Boolean notNull;
+    private Boolean notEmpty;
+    private Integer max;
+    private Integer min;
 
     public ColumnDTO() {
     }
 
     public ColumnDTO(String name, String type, Integer length, Boolean primaryKey, Boolean required, Boolean updatable,
                      Boolean list, Boolean set, Boolean unique, String generationType, String cardinality, String enumType,
-                     String mappedBy, String orderBy, String cascadeType, String temporalType) {
+                     String mappedBy, String orderBy, String cascadeType, String temporalType, Boolean notNull,
+                     Boolean notEmpty, Integer max, Integer min) {
         this.name = name;
         this.type = type;
         this.length = length;
@@ -43,6 +48,10 @@ public class ColumnDTO {
         this.orderBy = orderBy;
         this.cascadeType = cascadeType;
         this.temporalType = temporalType;
+        this.notNull = notNull;
+        this.notEmpty = notEmpty;
+        this.max = max;
+        this.min = min;
     }
 
     public String getName() {
@@ -171,6 +180,38 @@ public class ColumnDTO {
 
     public void setTemporalType(String temporalType) {
         this.temporalType = temporalType;
+    }
+
+    public Boolean isNotNull() {
+        return requireNonNullElse(notNull, false);
+    }
+
+    public void setNotNull(Boolean notNull) {
+        this.notNull = notNull;
+    }
+
+    public Boolean isNotEmpty() {
+        return requireNonNullElse(notEmpty, false);
+    }
+
+    public void setNotEmpty(Boolean notEmpty) {
+        this.notEmpty = notEmpty;
+    }
+
+    public Integer getMax() {
+        return max;
+    }
+
+    public void setMax(Integer max) {
+        this.max = max;
+    }
+
+    public Integer getMin() {
+        return min;
+    }
+
+    public void setMin(Integer min) {
+        this.min = min;
     }
 
     public boolean hasCardinality() {

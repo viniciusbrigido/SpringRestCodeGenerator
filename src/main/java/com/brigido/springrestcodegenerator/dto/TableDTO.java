@@ -2,6 +2,7 @@ package com.brigido.springrestcodegenerator.dto;
 
 import java.util.*;
 import static com.brigido.springrestcodegenerator.util.StringUtil.lowerCaseFirstLetter;
+import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static java.util.stream.Stream.*;
 
@@ -83,8 +84,20 @@ public class TableDTO {
         return !getColumnsPersist(entitiesId).isEmpty();
     }
 
-    public boolean hasRequired(Map<String, String> entitiesId) {
-        return getColumnsPersist(entitiesId).stream().anyMatch(ColumnDTO::isRequired);
+    public boolean hasNotNull() {
+        return columns.stream().anyMatch(ColumnDTO::isNotNull);
+    }
+
+    public boolean hasNotEmpty() {
+        return columns.stream().anyMatch(ColumnDTO::isNotEmpty);
+    }
+
+    public boolean hasMin() {
+        return columns.stream().anyMatch(columnDTO -> nonNull(columnDTO.getMin()));
+    }
+
+    public boolean hasMax() {
+        return columns.stream().anyMatch(columnDTO -> nonNull(columnDTO.getMax()));
     }
 
     public String getIdType() {
