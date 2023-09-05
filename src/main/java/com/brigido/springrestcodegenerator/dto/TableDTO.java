@@ -45,7 +45,7 @@ public class TableDTO {
     private List<ColumnDTO> getExternalColumns(Map<String, String> entitiesId) {
         List<ColumnDTO> externalColumns = new ArrayList<>();
         entitiesId.forEach((table, primaryKey) -> columns.forEach(columnDTO -> {
-            if (table.equals(columnDTO.getType())) {
+            if (table.equals(columnDTO.getType()) && !columnDTO.isCollection()) {
                 ColumnDTO column = new ColumnDTO();
                 column.setType(primaryKey);
                 column.setName(lowerCaseFirstLetter(table) + "Id");

@@ -1,5 +1,9 @@
-# Plugin Gerador de API Java Spring - CodeGenerator
+# Plugin Gerador de API Java Spring - CodeGenerator  <a href="https://plugins.jetbrains.com/plugin/22304-spring-rest-code-generator"><img style="float: right" src="src/main/resources/META-INF/pluginIcon.svg" height="100"/></a>
+
 Este plugin é um gerador de código Java Spring que permite criar APIs REST de maneira rápida e eficiente. Ele gera automaticamente as entidades, repositórios, serviços, implementações de serviço e controladores com endpoints completos de CRUDL (Create, Read, Update, Delete e List).
+
+
+[![Marketplace do IntelliJ](https://img.shields.io/badge/Marketplace%20do%20IntelliJ-blue)](https://plugins.jetbrains.com/plugin/22304-spring-rest-code-generator)
 
 ### Requisitos
 
@@ -7,6 +11,10 @@ Este plugin é um gerador de código Java Spring que permite criar APIs REST de 
 - Spring 3+ previamente configurado (`spring-boot-starter`, `spring-boot-starter-data-jdbc`, `spring-boot-starter-web`, `spring-boot-starter-data-jpa`, `spring-boot-starter-validation`, ...)
 - biblioteca ModelMapper (`org.modelmapper`) no pom do projeto alvo
 
+<script src="https://plugins.jetbrains.com/assets/scripts/mp-widget.js"></script>
+<script>
+  MarketplaceWidget.setupMarketplaceWidget('install', 22304, "#yourelement");
+</script>
 
 ```java
 @Configuration
@@ -86,7 +94,7 @@ public class ColumnDTO {
     private String mappedBy;
     private String orderBy;
     private String cascadeType;
-    private String temporal;
+    private String temporalType;
 }
 ```
 
