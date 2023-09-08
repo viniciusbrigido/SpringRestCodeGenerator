@@ -1,7 +1,5 @@
 package com.brigido.springrestcodegenerator.dto;
 
-import com.intellij.ui.components.JBTextField;
-
 import static java.util.Objects.requireNonNullElse;
 
 public class PropertyDTO {

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.brigido"
-version = "2023.1.1"
+version = "2023.1.3"
 
 repositories {
     mavenCentral()
