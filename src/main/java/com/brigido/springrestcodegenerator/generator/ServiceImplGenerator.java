@@ -5,6 +5,7 @@ import com.brigido.springrestcodegenerator.dto.TableDTO;
 import java.io.IOException;
 import java.util.Map;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
+import static com.brigido.springrestcodegenerator.util.ConstUtil.VALIDATE;
 import static com.brigido.springrestcodegenerator.util.StringUtil.*;
 
 public class ServiceImplGenerator extends BaseGenerator {
@@ -78,7 +79,7 @@ public class ServiceImplGenerator extends BaseGenerator {
                    .append("\tprivate ModelMapper modelMapper;\n\n");
 
         if (tableDTO.hasPersist(entitiesId)) {
-            crudMethods.append(getCreateMethod(tableDTO.getTable()));
+            crudMethods.append(getCreateMethod());
         }
 
         crudMethods.append(getFindByIdMethod())
@@ -86,33 +87,33 @@ public class ServiceImplGenerator extends BaseGenerator {
                    .append(getDeleteMethod(tableDTO.getIdType()));
 
         if (tableDTO.hasUpdate()) {
-            crudMethods.append(getUpdateMethod(tableDTO.getTable()));
+            crudMethods.append(getUpdateMethod());
         }
-        crudMethods.append(getFindAllMethod(tableDTO.getTable()))
-                   .append(getToResponseDTOMethod(tableDTO.getTable()));
+        crudMethods.append(getFindAllMethod())
+                   .append(getToResponseDTOMethod());
 
         return crudMethods.toString();
     }
 
-    private String getCreateMethod(String table) {
+    private String getCreateMethod() {
         if (!tableDTO.hasPersist(entitiesId)) {
             return "";
         }
 
         StringBuilder createMethod = new StringBuilder();
-        String objectNameLowerCase = lowerCaseFirstLetter(table);
-        String methodName = "\tpublic %s%s create(%s%s %s%s) {\n".formatted(
-                table, propertyDTO.getResponseDTOSuffix(), table, propertyDTO.getPersistDTOSuffix(),
+        String objectNameLowerCase = lowerCaseFirstLetter(tableDTO.getTable());
+        String methodName = "\tpublic %s%s %s(%s%s %s%s) {\n".formatted(
+                tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), propertyDTO.getFunctionCreate(), tableDTO.getTable(), propertyDTO.getPersistDTOSuffix(),
                 objectNameLowerCase, propertyDTO.getPersistDTOSuffix());
 
         createMethod.append("\t@Override\n")
                     .append(methodName)
 
-                    .append("\t\t").append(table).append(propertyDTO.getEntitySuffix()).append(" ").append(objectNameLowerCase)
+                    .append("\t\t").append(tableDTO.getTable()).append(propertyDTO.getEntitySuffix()).append(" ").append(objectNameLowerCase)
                     .append(" = modelMapper.map(").append(objectNameLowerCase)
-                    .append(propertyDTO.getPersistDTOSuffix()).append(", ").append(table).append(propertyDTO.getEntitySuffix()).append(".class);\n")
+                    .append(propertyDTO.getPersistDTOSuffix()).append(", ").append(tableDTO.getTable()).append(propertyDTO.getEntitySuffix()).append(".class);\n")
 
-                    .append("\t\treturn toResponseDTO(repository.save(").append(objectNameLowerCase)
+                    .append("\t\treturn to%s(repository.save(".formatted(propertyDTO.getResponseDTOSuffix())).append(objectNameLowerCase)
                     .append("));\n")
                     .append("\t}\n\n");
         return createMethod.toString();
@@ -120,7 +121,9 @@ public class ServiceImplGenerator extends BaseGenerator {
 
     private String getFindByIdMethod() {
         StringBuilder findByIdMethod = new StringBuilder();
-        String methodName = "\tpublic %s%s findById(%s id) {\n".formatted(tableDTO.getTable(), propertyDTO.getEntitySuffix(), tableDTO.getIdType());
+        String methodName = "\tpublic %s%s %s%s(%s id) {\n"
+                .formatted(tableDTO.getTable(), propertyDTO.getEntitySuffix(),
+                        propertyDTO.getFunctionFindById(), VALIDATE, tableDTO.getIdType());
 
         findByIdMethod.append("\t@Override\n")
                       .append(methodName)
@@ -134,53 +137,57 @@ public class ServiceImplGenerator extends BaseGenerator {
 
     private String getFindByIdDTOMethod() {
         StringBuilder findByIdMethodDTO = new StringBuilder();
-        String methodName = "\tpublic %s%s findByIdDTO(%s id) {\n"
-                .formatted(tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), tableDTO.getIdType());
+        String methodName = "\tpublic %s%s %s(%s id) {\n"
+                .formatted(tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(),
+                        propertyDTO.getFunctionFindById(), tableDTO.getIdType());
 
         findByIdMethodDTO.append("\t@Override\n")
                          .append(methodName)
 
-                         .append("\t\treturn toResponseDTO(findById(id));\n")
+                         .append("\t\treturn to%s(%s%s(id));\n".formatted(propertyDTO.getResponseDTOSuffix(),
+                                 propertyDTO.getFunctionFindById(), VALIDATE))
                          .append("\t}\n\n");
 
         return findByIdMethodDTO.toString();
     }
 
-    private String getFindAllMethod(String table) {
+    private String getFindAllMethod() {
         StringBuilder findAllMethod = new StringBuilder();
-        String methodName = "\tpublic List<%s%s> findAll() {\n".formatted(table, propertyDTO.getResponseDTOSuffix());
+        String methodName = "\tpublic List<%s%s> %s() {\n"
+                .formatted(tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), propertyDTO.getFunctionFindAll());
 
         findAllMethod.append("\t@Override\n")
                      .append(methodName)
 
                      .append("\t\treturn repository.findAll()\n")
                      .append("\t\t\t.stream()\n")
-                     .append("\t\t\t.map(this::toResponseDTO)\n")
+                     .append("\t\t\t.map(this::to%s)\n".formatted(propertyDTO.getResponseDTOSuffix()))
                      .append("\t\t\t.collect(Collectors.toList());\n")
                      .append("\t}\n\n");
 
         return findAllMethod.toString();
     }
 
-    private String getUpdateMethod(String table) {
+    private String getUpdateMethod() {
         StringBuilder updateMethod = new StringBuilder();
-        String objectNameLowerCase = lowerCaseFirstLetter(table);
-        String methodName = "\tpublic %s%s update(%s%s %s%s) {\n".formatted(
-                table, propertyDTO.getResponseDTOSuffix(), table, propertyDTO.getUpdateDTOSuffix(),
+        String objectNameLowerCase = lowerCaseFirstLetter(tableDTO.getTable());
+        String methodName = "\tpublic %s%s %s(%s%s %s%s) {\n".formatted(
+                tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), propertyDTO.getFunctionUpdate(),
+                tableDTO.getTable(), propertyDTO.getUpdateDTOSuffix(),
                 objectNameLowerCase, propertyDTO.getUpdateDTOSuffix());
 
         updateMethod.append("\t@Override\n")
                     .append(methodName)
 
-                    .append("\t\t").append(table).append(propertyDTO.getEntitySuffix()).append(" ").append(objectNameLowerCase)
-                    .append(" = findById(").append(objectNameLowerCase)
-                    .append(propertyDTO.getUpdateDTOSuffix()).append(".getId());\n")
+                    .append("\t\t").append(tableDTO.getTable()).append(propertyDTO.getEntitySuffix()).append(" ").append(objectNameLowerCase)
+                    .append(" = %s%s(".formatted(propertyDTO.getFunctionFindById(), VALIDATE)).append(objectNameLowerCase)
+                    .append(propertyDTO.getUpdateDTOSuffix()).append(".get%s());\n".formatted(capitalizeFirstLetter(tableDTO.getIdName())))
 
                     .append("\t\t")
                     .append(objectNameLowerCase).append(".update(")
                     .append(objectNameLowerCase).append(propertyDTO.getUpdateDTOSuffix()).append(");\n")
 
-                    .append("\t\treturn toResponseDTO(repository.save(").append(objectNameLowerCase).append("));\n")
+                    .append("\t\treturn to%s(repository.save(".formatted(propertyDTO.getResponseDTOSuffix())).append(objectNameLowerCase).append("));\n")
                     .append("\t}\n\n");
 
         return updateMethod.toString();
@@ -198,13 +205,16 @@ public class ServiceImplGenerator extends BaseGenerator {
         return deleteMethod.toString();
     }
 
-    private String getToResponseDTOMethod(String table) {
+    private String getToResponseDTOMethod() {
         StringBuilder toResponseDTO = new StringBuilder();
-        String objectNameLowerCase = lowerCaseFirstLetter(table);
-        String methodName = "\tprivate %s%s toResponseDTO(%s%s %s) {\n".formatted(table, propertyDTO.getResponseDTOSuffix(), table, propertyDTO.getEntitySuffix(), objectNameLowerCase);
+        String objectNameLowerCase = lowerCaseFirstLetter(tableDTO.getTable());
+        String methodName = "\tprivate %s%s to%s(%s%s %s) {\n"
+                .formatted(tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(),
+                        propertyDTO.getResponseDTOSuffix(), tableDTO.getTable(),
+                        propertyDTO.getEntitySuffix(), objectNameLowerCase);
 
         toResponseDTO.append(methodName)
-                     .append("\t\treturn modelMapper.map(").append(objectNameLowerCase).append(", ").append(table)
+                     .append("\t\treturn modelMapper.map(").append(objectNameLowerCase).append(", ").append(tableDTO.getTable())
                      .append(propertyDTO.getResponseDTOSuffix()).append(".class);\n")
                      .append("\t}\n\n");
 

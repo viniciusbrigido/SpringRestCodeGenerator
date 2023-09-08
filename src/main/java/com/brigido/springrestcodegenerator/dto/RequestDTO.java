@@ -5,15 +5,25 @@ import static java.util.Optional.*;
 
 public class RequestDTO {
 
+    private String apiVersion;
     private List<TableDTO> tables;
     private List<EnumDTO> enums;
 
     public RequestDTO() {
     }
 
-    public RequestDTO(List<TableDTO> tables, List<EnumDTO> enums) {
+    public RequestDTO(String apiVersion, List<TableDTO> tables, List<EnumDTO> enums) {
+        this.apiVersion = apiVersion;
         this.tables = tables;
         this.enums = enums;
+    }
+
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
     }
 
     public List<TableDTO> getTables() {

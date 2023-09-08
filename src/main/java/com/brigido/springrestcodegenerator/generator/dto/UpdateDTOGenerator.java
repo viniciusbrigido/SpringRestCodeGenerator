@@ -55,7 +55,7 @@ public class UpdateDTOGenerator extends BaseGenerator {
                .append(getImportsByConfigEntityDTO(tableDTO.getColumnsUpdate()));
 
         if (tableDTO.hasEnum(enums)) {
-            imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), "enumeration")))
+            imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getEnumerationPath())))
                    .append(".*;\n");
         }
 

@@ -87,10 +87,22 @@ public class TableDTO {
         return getColumnsPersist(entitiesId).stream().anyMatch(ColumnDTO::isRequired);
     }
 
+    public boolean isCompositeId() {
+        return columns.stream().filter(ColumnDTO::isPrimaryKey).toList().size() > 1;
+    }
+
     public String getIdType() {
         return columns.stream()
                 .filter(ColumnDTO::isPrimaryKey)
                 .map(ColumnDTO::getType)
+                .findFirst()
+                .orElse("");
+    }
+
+    public String getIdName() {
+        return columns.stream()
+                .filter(ColumnDTO::isPrimaryKey)
+                .map(ColumnDTO::getName)
                 .findFirst()
                 .orElse("");
     }

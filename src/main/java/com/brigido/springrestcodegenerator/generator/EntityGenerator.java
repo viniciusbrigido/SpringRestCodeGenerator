@@ -48,7 +48,7 @@ public class EntityGenerator extends BaseGenerator {
                .append(getImportsByConfigEntityDTO(tableDTO.getColumns()));
 
         if (tableDTO.hasEnum(enums)) {
-            imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), "enumeration")))
+            imports.append("import ").append(convertDirectoryToPackage(getDirectory(propertyDTO.getUrlProject(), propertyDTO.getEnumerationPath())))
                    .append(".*;\n");
         }
 

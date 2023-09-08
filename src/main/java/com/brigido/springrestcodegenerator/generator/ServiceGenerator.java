@@ -5,6 +5,7 @@ import com.brigido.springrestcodegenerator.dto.TableDTO;
 import java.io.IOException;
 import java.util.Map;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
+import static com.brigido.springrestcodegenerator.util.ConstUtil.*;
 import static com.brigido.springrestcodegenerator.util.StringUtil.*;
 
 public class ServiceGenerator extends BaseGenerator {
@@ -63,17 +64,20 @@ public class ServiceGenerator extends BaseGenerator {
         StringBuilder crudMethods = new StringBuilder();
         String objectNameLowerCase = lowerCaseFirstLetter(tableDTO.getTable());
 
-        String methodCreateName = "\t%s%s create(%s%s %s%s);\n".formatted(
-                tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), tableDTO.getTable(), propertyDTO.getPersistDTOSuffix(),
+        String methodCreateName = "\t%s%s %s(%s%s %s%s);\n".formatted(
+                tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), propertyDTO.getFunctionCreate(),
+                tableDTO.getTable(), propertyDTO.getPersistDTOSuffix(),
                 objectNameLowerCase, propertyDTO.getPersistDTOSuffix());
 
-        String methodFindByIdName = "\t%s%s findById(%s id);\n".formatted(
-                tableDTO.getTable(), propertyDTO.getEntitySuffix(), tableDTO.getIdType());
+        String methodFindByIdName = "\t%s%s %s%s(%s id);\n".formatted(
+                tableDTO.getTable(), propertyDTO.getEntitySuffix(),
+                propertyDTO.getFunctionFindById(), VALIDATE, tableDTO.getIdType());
 
-        String methodFindByIdDTOName = "\t%s%s findByIdDTO(%s id);\n".formatted(
-                tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), tableDTO.getIdType());
+        String methodFindByIdDTOName = "\t%s%s %s(%s id);\n".formatted(
+                tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(),
+                propertyDTO.getFunctionFindById(), tableDTO.getIdType());
 
-        String methodDeleteName = "\tvoid delete(%s id);\n".formatted(tableDTO.getIdType());
+        String methodDeleteName = "\tvoid %s(%s id);\n".formatted(propertyDTO.getFunctionDelete(), tableDTO.getIdType());
 
         if (tableDTO.hasPersist(entitiesId)) {
             crudMethods.append(methodCreateName);
@@ -84,8 +88,9 @@ public class ServiceGenerator extends BaseGenerator {
                    .append(methodDeleteName);
 
         if (tableDTO.hasUpdate()) {
-            String methodUpdateName = "\t%s%s update(%s%s %s%s);\n".formatted(
-                    tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), tableDTO.getTable(), propertyDTO.getUpdateDTOSuffix(),
+            String methodUpdateName = "\t%s%s %s(%s%s %s%s);\n".formatted(
+                    tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), propertyDTO.getFunctionUpdate(),
+                    tableDTO.getTable(), propertyDTO.getUpdateDTOSuffix(),
                     objectNameLowerCase, propertyDTO.getUpdateDTOSuffix());
 
             crudMethods.append(methodUpdateName);

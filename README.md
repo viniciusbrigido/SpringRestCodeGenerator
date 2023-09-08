@@ -35,9 +35,10 @@ public class BeanConfig {
 
 
 ```java
-public class RequestDTO {
-  private List<TableDTO> tables;
-  private List<EnumDTO> enums;
+public class RequestDTO { 
+    private String apiVersion;
+    private List<TableDTO> tables;
+    private List<EnumDTO> enums;
 }
 ```
 
@@ -97,6 +98,8 @@ public class ColumnDTO {
     private String temporalType;
 }
 ```
+
+`apiVersion: (opcional)` Versão da api. Exemplo: `api/v1'`.
 
 `table:` Nome da entidade (deve ser camel case e iniciar com letra Maiúscula).
 
@@ -193,13 +196,13 @@ Para utilizar o gerador, siga as etapas abaixo:
 - `Usar Lombok:` Determina se o projeto utiliza a biblioteca Lombok. Caso marcado, `getters`, `setters` e `construtores` das entidades e DTOs serão criados com `Lombok`.
 - `Usar Serializable:` Determina se as entidades já iniciarão implementando a interface `Serializable`.
 
-### Modal de Configurações Extras
+### Modal de Configurações de Estrutura
 
-Ao clicar no botão `Configurações Extras` da modal de Geração de Código, a seguinte modal abrirá: 
+Ao clicar no botão `Estrutura` da modal de Geração de Código, a seguinte modal abrirá: 
 
-![Configurações Extras](./src/main/resources/images/modalSettings.png)
+![Configurações Extras](./src/main/resources/images/structureModal.png)
 
-### Explicação dos campos da modal de Configurações Extras:
+### Explicação dos campos da modal de Configurações de Estrutura:
 
 `Prefixo da Entidade:` Define o prefixo para nomes de classes de entidade. Exemplo 'Model' ou 'Entity'.
 
@@ -238,6 +241,39 @@ Ao clicar no botão `Configurações Extras` da modal de Geração de Código, a
 - Os sufixos sempre iniciarão com letra maiúscula.
 - Caso seja necessário fazer a criação de subpastas é necessário utilizar '/' para fazer a separção. 
 
+### Modal de Configurações de Funções
+
+Ao clicar no botão `Funções` da modal de Geração de Código, a seguinte modal abrirá:
+
+![Configurações Extras](./src/main/resources/images/functionModal.png)
+
+### Explicação dos campos da modal de Configurações de Funções:
+
+`Função de Persistência (default 'create'):` Determina o nome da função de persistência da tabela. Utilizado no Serviço, Implementação do Serviço e na classe de Controle.
+
+`Endpoint de Persistência:` Determina o nome do endpoint de persistência da tabela. Tipo de requisição `POST`.
+
+`Função de Busca por ID (default 'findById'):` Determina o nome da função de busca por ID da tabela. Utilizado no Serviço, Implementação do Serviço e na classe de Controle.
+
+`Endpoint de Busca por ID:` Determina o nome do endpoint de busca por ID da tabela. Tipo de requisição `GET`, passando o ID pela `URI` da requisição.
+
+`Função de Atualização (default 'update'):` Determina o nome da função de atualização da tabela. Utilizado no Serviço, Implementação do Serviço e na classe de Controle.
+
+`Endpoint de Atualização:` Determina o nome do endpoint de Atualização da tabela. Tipo de requisição `PUT`, passando o ID pela `URI` da requisição.
+
+`Função de Remoção (default 'delete'): ` Determina o nome da função de remoção da tabela. Utilizado no Serviço, Implementação do Serviço e na classe de Controle.
+
+`Endpoint de Remoção:` Determina o nome do endpoint de Remoção da tabela. Tipo de requisição `DELETE`, passando o ID pela `URI` da requisição.
+
+`Função de Listagem (default 'findAll'):` Determina o nome da função de listagem da tabela. Utilizado no Serviço, Implementação do Serviço e na classe de Controle.
+
+`Endpoint de Listagem:` Determina o nome do endpoint de listagem da tabela. Tipo de requisição `GET`.
+
+#### Sintaxe dos campos:
+
+- As funções sempre iniciarão com letra minúscula.
+- Os nomes dos endpoints tem por padrão vazio pois o que diferencia eles na chamada é o tipo de requisição (`GET`, `POST`, `DELETE` e `UPDATE`). 
+
 ### Observações
 
 - Certifique-se de que todas as dependências do Java Spring necessárias para a execução do projeto sejam adicionadas corretamente.
@@ -246,4 +282,6 @@ Ao clicar no botão `Configurações Extras` da modal de Geração de Código, a
 
 - É recomendável buildar, revisar e testar o código gerado para garantir que tudo esteja funcionando corretamente.
 
-- Caso seja definido no JSON uma entidade que já existe no código ela, será apagada e gerada novamente. 
+- Caso seja definido no JSON uma entidade que já existe no código ela, será apagada e gerada novamente.
+
+- Não há suporte para chave primária composta.

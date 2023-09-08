@@ -1,5 +1,7 @@
 package com.brigido.springrestcodegenerator.dto;
 
+import com.intellij.ui.components.JBTextField;
+
 import static java.util.Objects.requireNonNullElse;
 
 public class PropertyDTO {
@@ -32,6 +34,22 @@ public class PropertyDTO {
 
     private String responseDTOPath;
     private String responseDTOSuffix;
+
+
+    private String functionFindById;
+    private String endpointFindById;
+
+    private String functionCreate;
+    private String endpointCreate;
+
+    private String functionDelete;
+    private String endpointDelete;
+
+    private String functionUpdate;
+    private String endpointUpdate;
+
+    private String functionFindAll;
+    private String endpointFindAll;
 
     public String getUrlProject() {
         return urlProject;
@@ -191,5 +209,89 @@ public class PropertyDTO {
 
     public void setEntityPath(String entityPath) {
         this.entityPath = entityPath;
+    }
+
+    public String getEnumerationPath() {
+        return "enumeration";
+    }
+
+    public String getFunctionFindById() {
+        return requireNonNullElse(functionFindById, "findById");
+    }
+
+    public void setFunctionFindById(String functionFindById) {
+        this.functionFindById = functionFindById;
+    }
+
+    public String getFunctionCreate() {
+        return requireNonNullElse(functionCreate, "create");
+    }
+
+    public void setFunctionCreate(String functionCreate) {
+        this.functionCreate = functionCreate;
+    }
+
+    public String getFunctionDelete() {
+        return requireNonNullElse(functionDelete, "delete");
+    }
+
+    public void setFunctionDelete(String functionDelete) {
+        this.functionDelete = functionDelete;
+    }
+
+    public String getFunctionUpdate() {
+        return requireNonNullElse(functionUpdate, "update");
+    }
+
+    public void setFunctionUpdate(String functionUpdate) {
+        this.functionUpdate = functionUpdate;
+    }
+
+    public String getFunctionFindAll() {
+        return requireNonNullElse(functionFindAll, "findAll");
+    }
+
+    public void setFunctionFindAll(String functionFindAll) {
+        this.functionFindAll = functionFindAll;
+    }
+
+    public String getEndpointFindById() {
+        return requireNonNullElse(endpointFindById, "");
+    }
+
+    public void setEndpointFindById(String endpointFindById) {
+        this.endpointFindById = endpointFindById;
+    }
+
+    public String getEndpointCreate() {
+        return requireNonNullElse(endpointCreate, "");
+    }
+
+    public void setEndpointCreate(String endpointCreate) {
+        this.endpointCreate = endpointCreate;
+    }
+
+    public String getEndpointDelete() {
+        return requireNonNullElse(endpointDelete, "");
+    }
+
+    public void setEndpointDelete(String endpointDelete) {
+        this.endpointDelete = endpointDelete;
+    }
+
+    public String getEndpointUpdate() {
+        return requireNonNullElse(endpointUpdate, "");
+    }
+
+    public void setEndpointUpdate(String endpointUpdate) {
+        this.endpointUpdate = endpointUpdate;
+    }
+
+    public String getEndpointFindAll() {
+        return requireNonNullElse(endpointFindAll, "");
+    }
+
+    public void setEndpointFindAll(String endpointFindAll) {
+        this.endpointFindAll = endpointFindAll;
     }
 }

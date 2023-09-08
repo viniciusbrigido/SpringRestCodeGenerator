@@ -2,6 +2,7 @@ package com.brigido.springrestcodegenerator.dialog;
 
 import com.brigido.springrestcodegenerator.config.CodeGeneratorSettings;
 import com.brigido.springrestcodegenerator.dto.PropertyDTO;
+import com.brigido.springrestcodegenerator.exception.FileNameException;
 import com.brigido.springrestcodegenerator.util.StringUtil;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.components.JBLabel;
@@ -11,13 +12,16 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.List;
 import static com.brigido.springrestcodegenerator.util.ConstUtil.*;
+import static com.brigido.springrestcodegenerator.util.MessageUtil.showErrorMessageDialog;
 import static java.util.Objects.*;
 
-public class ExtraSettingsDialog extends DialogWrapper {
+public class StructureSettingsDialog extends DialogWrapper {
 
     private PropertyDTO propertyDTO;
-    private CodeGeneratorDialog codeGeneratorDialog;
+    private final CodeGeneratorDialog codeGeneratorDialog;
 
     private JBTextField serviceSuffix;
     private JBTextField servicePath;
@@ -43,12 +47,12 @@ public class ExtraSettingsDialog extends DialogWrapper {
     private JBTextField entitySuffix;
     private JBTextField entityPath;
 
-    public ExtraSettingsDialog(CodeGeneratorDialog codeGeneratorDialog) {
+    public StructureSettingsDialog(CodeGeneratorDialog codeGeneratorDialog) {
         super(true);
         this.codeGeneratorDialog = codeGeneratorDialog;
         setOKButtonText("Salvar [F2]");
         setCancelButtonText("Sair [Esc]");
-        setTitle(TITLE_EXTRA_SETTINGS);
+        setTitle(TITLE_STRUCTURE_SETTINGS);
         init();
 
         getRootPane().registerKeyboardAction(
@@ -177,7 +181,6 @@ public class ExtraSettingsDialog extends DialogWrapper {
         return panel;
     }
 
-
     private void loadProperties() {
         propertyDTO = new CodeGeneratorSettings().getPropertyDTO();
         if (isNull(propertyDTO)) {
@@ -203,7 +206,15 @@ public class ExtraSettingsDialog extends DialogWrapper {
 
     @Override
     protected void doOKAction() {
-        codeGeneratorDialog.setExtraSettings(getPropertyDTO());
+        PropertyDTO propertyDTO;
+        try {
+            propertyDTO = getPropertyDTO();
+        } catch (FileNameException e) {
+            showErrorMessageDialog("Os campos não podem conter caracteres inválidos.");
+            return;
+        }
+
+        codeGeneratorDialog.setStructureSettings(propertyDTO);
         close(OK_EXIT_CODE);
     }
 
@@ -229,12 +240,19 @@ public class ExtraSettingsDialog extends DialogWrapper {
     }
 
     private String getTextFieldValue(JBTextField textField, boolean isSuffix) {
-        if (nonNull(textField) && nonNull(textField.getText()) && !textField.getText().isEmpty()) {
-            if (isSuffix) {
-                return StringUtil.capitalizeFirstLetter(textField.getText());
-            }
-            return textField.getText();
+        if (isNull(textField) || isNull(textField.getText()) || textField.getText().isEmpty()) {
+            return null;
         }
-        return null;
+        String text = isSuffix ? StringUtil.capitalizeFirstLetter(textField.getText()) : textField.getText();
+        if (!isValidText(text)) {
+            throw new FileNameException();
+        }
+        return text;
+    }
+
+    private boolean isValidText(String text) {
+        List<String> notAllowedCharacters = Arrays.asList("\\", ":", "*", "?", "<", ">", "|");
+
+        return notAllowedCharacters.stream().noneMatch(text::contains);
     }
 }

@@ -6,14 +6,17 @@ import java.io.IOException;
 import java.util.Map;
 import static com.brigido.springrestcodegenerator.enumeration.Imports.*;
 import static com.brigido.springrestcodegenerator.util.StringUtil.*;
+import static java.util.Objects.*;
 
 public class ControllerGenerator extends BaseGenerator {
 
+    private String apiVersion;
     private PropertyDTO propertyDTO;
     private TableDTO tableDTO;
     private Map<String, String> entitiesId;
 
-    public void create(PropertyDTO propertyDTO, TableDTO tableDTO, Map<String, String> entitiesId) throws IOException {
+    public void create(String apiVersion, PropertyDTO propertyDTO, TableDTO tableDTO, Map<String, String> entitiesId) throws IOException {
+        this.apiVersion = apiVersion;
         this.propertyDTO = propertyDTO;
         this.tableDTO = tableDTO;
         this.entitiesId = entitiesId;
@@ -28,7 +31,7 @@ public class ControllerGenerator extends BaseGenerator {
 
         code.append(getPackageName(propertyDTO.getUrlProject(), propertyDTO.getControllerPath()))
             .append(getImports())
-            .append(getHeader(tableDTO.getTable()))
+            .append(getHeader())
             .append(className)
             .append("\t@Autowired\n")
             .append("\tprivate ").append(tableDTO.getTable()).append(propertyDTO.getServiceSuffix()).append(" service;\n\n")
@@ -64,41 +67,52 @@ public class ControllerGenerator extends BaseGenerator {
         return imports.toString();
     }
 
-    private String getHeader(String table) {
+    private String getHeader() {
         StringBuilder header = new StringBuilder();
         header.append("@RestController\n")
               .append("@RequestMapping(\"")
-              .append(parseCamelCaseToSnakeCase(table))
+              .append(getControllerName())
               .append("\")\n");
 
         return header.toString();
     }
 
+    private String getControllerName() {
+        String controlerTable = parseCamelCaseToSnakeCase(tableDTO.getTable());
+        if (isNull(apiVersion) || apiVersion.isEmpty()) {
+            return controlerTable;
+        }
+        if (apiVersion.endsWith("/")) {
+            return apiVersion + controlerTable;
+        }
+        return "%s/%s".formatted(apiVersion, controlerTable);
+    }
+
     private String getCrudMethods() {
         StringBuilder crudMethods = new StringBuilder();
-        crudMethods.append(getCreateMethod(tableDTO.getTable()))
+        crudMethods.append(getCreateMethod())
                    .append(getFindByIdMethod())
                    .append(getDeleteMethod())
                    .append(getUpdateMethod())
-                   .append(getFindAllMethod(tableDTO.getTable()));
+                   .append(getFindAllMethod());
         return crudMethods.toString();
     }
 
-    private String getCreateMethod(String table) {
+    private String getCreateMethod() {
         if (!tableDTO.hasPersist(entitiesId)) {
             return "";
         }
 
         StringBuilder createMethod = new StringBuilder();
-        String objectNameLowerCase = lowerCaseFirstLetter(table);
-        String methodName = "\tpublic ResponseEntity<%s%s> create(@RequestBody %s%s %s%s) {\n".formatted(
-                table, propertyDTO.getResponseDTOSuffix(), table, propertyDTO.getPersistDTOSuffix(),
-                objectNameLowerCase, propertyDTO.getPersistDTOSuffix());
+        String objectNameLowerCase = lowerCaseFirstLetter(tableDTO.getTable());
+        String methodName = "\tpublic ResponseEntity<%s%s> %s(@RequestBody %s%s %s%s) {\n".formatted(
+                tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), propertyDTO.getFunctionCreate(), tableDTO.getTable(),
+                propertyDTO.getPersistDTOSuffix(), objectNameLowerCase, propertyDTO.getPersistDTOSuffix());
 
-        createMethod.append("\t@PostMapping(\"create\")\n")
+        createMethod.append("\t@PostMapping%s\n".formatted(getEndpointName(propertyDTO.getEndpointCreate())))
                     .append(methodName)
 
-                    .append("\t\treturn ResponseEntity.ok(service.create(")
+                    .append("\t\treturn ResponseEntity.ok(service.%s(".formatted(propertyDTO.getFunctionCreate()))
                     .append(objectNameLowerCase).append(propertyDTO.getPersistDTOSuffix()).append("));\n")
                     .append("\t}\n\n");
 
@@ -107,12 +121,13 @@ public class ControllerGenerator extends BaseGenerator {
 
     private String getFindByIdMethod() {
         StringBuilder findByIdMethod = new StringBuilder();
-        String methodName = "\tpublic ResponseEntity<%s%s> findById(@PathVariable %s id) {\n".formatted(
-                tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), tableDTO.getIdType());
+        String methodName = "\tpublic ResponseEntity<%s%s> %s(@PathVariable %s id) {\n".formatted(
+                tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), propertyDTO.getFunctionFindById(),
+                tableDTO.getIdType());
 
-        findByIdMethod.append("\t@GetMapping(\"{id}\")\n")
+        findByIdMethod.append("\t@GetMapping%s\n".formatted(getEndpointNameWithId(propertyDTO.getEndpointFindById())))
                       .append(methodName)
-                      .append("\t\treturn ResponseEntity.ok(service.findByIdDTO(id));\n")
+                      .append("\t\treturn ResponseEntity.ok(service.%s(id));\n".formatted(propertyDTO.getFunctionFindById()))
                       .append("\t}\n\n");
 
         return findByIdMethod.toString();
@@ -120,11 +135,12 @@ public class ControllerGenerator extends BaseGenerator {
 
     private String getDeleteMethod() {
         StringBuilder deleteMethod = new StringBuilder();
-        String methodName = "\tpublic ResponseEntity<Void> delete(@PathVariable %s id) {\n".formatted(tableDTO.getIdType());
+        String methodName = "\tpublic ResponseEntity<Void> %s(@PathVariable %s id) {\n".formatted(
+                propertyDTO.getFunctionDelete(), tableDTO.getIdType());
 
-        deleteMethod.append("\t@DeleteMapping(\"{id}\")\n")
+        deleteMethod.append("\t@DeleteMapping%s\n".formatted(getEndpointNameWithId(propertyDTO.getEndpointDelete())))
                     .append(methodName)
-                    .append("\t\tservice.delete(id);\n")
+                    .append("\t\tservice.%s(id);\n".formatted(propertyDTO.getFunctionDelete()))
                     .append("\t\treturn ResponseEntity.ok().build();\n")
                     .append("\t}\n\n");
 
@@ -138,28 +154,42 @@ public class ControllerGenerator extends BaseGenerator {
 
         StringBuilder updateMethod = new StringBuilder();
         String objectNameLowerCase = lowerCaseFirstLetter(tableDTO.getTable());
-        String methodName = "\tpublic ResponseEntity<%s%s> update(@RequestBody %s%s %s%s) {\n".formatted(
-                tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), tableDTO.getTable(), propertyDTO.getUpdateDTOSuffix(),
-                objectNameLowerCase, propertyDTO.getUpdateDTOSuffix());
+        String methodName = "\tpublic ResponseEntity<%s%s> %s(@RequestBody %s%s %s%s) {\n".formatted(
+                tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), propertyDTO.getFunctionUpdate(),
+                tableDTO.getTable(), propertyDTO.getUpdateDTOSuffix(), objectNameLowerCase, propertyDTO.getUpdateDTOSuffix());
 
-        updateMethod.append("\t@PutMapping(\"update\")\n")
+        updateMethod.append("\t@PutMapping%s\n".formatted(getEndpointName(propertyDTO.getEndpointUpdate())))
                     .append(methodName)
-                    .append("\t\treturn ResponseEntity.ok(service.update(")
+                    .append("\t\treturn ResponseEntity.ok(service.%s(".formatted(propertyDTO.getFunctionUpdate()))
                     .append(objectNameLowerCase).append(propertyDTO.getUpdateDTOSuffix()).append("));\n")
                     .append("\t}\n\n");
 
         return updateMethod.toString();
     }
 
-    private String getFindAllMethod(String table) {
+    private String getFindAllMethod() {
         StringBuilder findAllMethod = new StringBuilder();
-        String methodName = "\tpublic ResponseEntity<List<%s%s>> findAll() {\n"
-                .formatted(table, propertyDTO.getResponseDTOSuffix());
+        String methodName = "\tpublic ResponseEntity<List<%s%s>> %s() {\n"
+                .formatted(tableDTO.getTable(), propertyDTO.getResponseDTOSuffix(), propertyDTO.getFunctionFindAll());
 
-        findAllMethod.append("\t@GetMapping\n")
-                    .append(methodName)
-                    .append("\t\treturn ResponseEntity.ok(service.findAll());\n")
-                    .append("\t}\n\n");
+        findAllMethod.append("\t@GetMapping%s\n".formatted(getEndpointName(propertyDTO.getEndpointFindAll())))
+                     .append(methodName)
+                     .append("\t\treturn ResponseEntity.ok(service.%s());\n".formatted(propertyDTO.getFunctionFindAll()))
+                     .append("\t}\n\n");
         return findAllMethod.toString();
+    }
+
+    private String getEndpointName(String endpointName) {
+        if (isNull(endpointName) || endpointName.isEmpty()) {
+            return "";
+        }
+        return "(\"%s\")".formatted(endpointName);
+    }
+
+    private String getEndpointNameWithId(String endpointName) {
+        if (isNull(endpointName) || endpointName.isEmpty()) {
+            return "(\"{id}\")";
+        }
+        return "(\"%s/{id}\")".formatted(endpointName);
     }
 }

@@ -26,7 +26,7 @@ public class Generator {
             new RepositoryGenerator().create(propertyDTO, tableDTO);
             new ServiceGenerator().create(propertyDTO, tableDTO, entitiesId);
             new ServiceImplGenerator().create(propertyDTO, tableDTO, entitiesId);
-            new ControllerGenerator().create(propertyDTO, tableDTO, entitiesId);
+            new ControllerGenerator().create(requestDTO.getApiVersion(), propertyDTO, tableDTO, entitiesId);
             new ResponseDTOGenerator().create(propertyDTO, tableDTO, enums);
             new PersistDTOGenerator().create(propertyDTO, tableDTO, entitiesId, enums);
             new UpdateDTOGenerator().create(propertyDTO, tableDTO, enums);
@@ -69,6 +69,9 @@ public class Generator {
             }
             if (tableDTO.getIdType().isEmpty()) {
                 throw new SyntaxErrorException("A entidade %s não possui uma coluna de chave primária.".formatted(tableDTO.getTable()));
+            }
+            if (tableDTO.isCompositeId()) {
+                throw new SyntaxErrorException("A entidade %s tem 2 colunas como ID. O gerador não suporta ID composto.".formatted(tableDTO.getTable()));
             }
 
             for (ColumnDTO columnDTO : tableDTO.getColumns()) {

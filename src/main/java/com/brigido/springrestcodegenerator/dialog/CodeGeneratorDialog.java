@@ -105,9 +105,28 @@ public class CodeGeneratorDialog extends DialogWrapper {
         panel.add(checkboxPanel, gbc);
 
         gbc.gridy++;
-        JButton extraSettingsButton = new JButton("Configurações Extras");
-        extraSettingsButton.addActionListener(e -> showExtraSettingsDialog());
-        panel.add(extraSettingsButton, gbc);
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
+
+        JButton structureSettingsButton = new JButton("Estrutura");
+        structureSettingsButton.addActionListener(e -> showStructureSettingsDialog());
+        buttonPanel.add(structureSettingsButton);
+
+        JButton functionsSettingsButton = new JButton("Funções");
+        functionsSettingsButton.addActionListener(e -> showFunctionsSettingsDialog());
+        buttonPanel.add(functionsSettingsButton);
+
+        JPanel settingsPanel = new JPanel(new BorderLayout());
+        settingsPanel.add(new JLabel("Configurações Extras:"), BorderLayout.NORTH);
+        settingsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        settingsPanel.add(buttonPanel, BorderLayout.CENTER);
+
+        GridBagConstraints settingsPanelGbc = new GridBagConstraints();
+        settingsPanelGbc.gridx = 0;
+        settingsPanelGbc.gridy = gbc.gridy;
+        settingsPanelGbc.gridwidth = 2;
+        settingsPanelGbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(settingsPanel, settingsPanelGbc);
 
         panel.setPreferredSize(new Dimension(530, panel.getPreferredSize().height));
         loadProperties();
@@ -179,26 +198,43 @@ public class CodeGeneratorDialog extends DialogWrapper {
         }
     }
 
-    private void showExtraSettingsDialog() {
-        new ExtraSettingsDialog(this).show();
+    private void showStructureSettingsDialog() {
+        new StructureSettingsDialog(this).show();
     }
 
-    public void setExtraSettings(PropertyDTO propertyDTOExtraSettings) {
-        getPropertyDTO().setServiceSuffix(propertyDTOExtraSettings.getServiceSuffix());
-        getPropertyDTO().setServicePath(propertyDTOExtraSettings.getServicePath());
-        getPropertyDTO().setServiceImplSuffix(propertyDTOExtraSettings.getServiceImplSuffix());
-        getPropertyDTO().setServiceImplPath(propertyDTOExtraSettings.getServiceImplPath());
-        getPropertyDTO().setRepositorySuffix(propertyDTOExtraSettings.getRepositorySuffix());
-        getPropertyDTO().setRepositoryPath(propertyDTOExtraSettings.getRepositoryPath());
-        getPropertyDTO().setPersistDTOSuffix(propertyDTOExtraSettings.getPersistDTOSuffix());
-        getPropertyDTO().setPersistDTOPath(propertyDTOExtraSettings.getPersistDTOPath());
-        getPropertyDTO().setUpdateDTOSuffix(propertyDTOExtraSettings.getUpdateDTOSuffix());
-        getPropertyDTO().setUpdateDTOPath(propertyDTOExtraSettings.getUpdateDTOPath());
-        getPropertyDTO().setResponseDTOSuffix(propertyDTOExtraSettings.getResponseDTOSuffix());
-        getPropertyDTO().setResponseDTOPath(propertyDTOExtraSettings.getResponseDTOPath());
-        getPropertyDTO().setControllerSuffix(propertyDTOExtraSettings.getControllerSuffix());
-        getPropertyDTO().setControllerPath(propertyDTOExtraSettings.getControllerPath());
-        getPropertyDTO().setEntitySuffix(propertyDTOExtraSettings.getEntitySuffix());
-        getPropertyDTO().setEntityPath(propertyDTOExtraSettings.getEntityPath());
+    private void showFunctionsSettingsDialog() {
+        new FunctionSettingsDialog(this).show();
+    }
+
+    public void setStructureSettings(PropertyDTO propertyDTOStructureSettings) {
+        getPropertyDTO().setServiceSuffix(propertyDTOStructureSettings.getServiceSuffix());
+        getPropertyDTO().setServicePath(propertyDTOStructureSettings.getServicePath());
+        getPropertyDTO().setServiceImplSuffix(propertyDTOStructureSettings.getServiceImplSuffix());
+        getPropertyDTO().setServiceImplPath(propertyDTOStructureSettings.getServiceImplPath());
+        getPropertyDTO().setRepositorySuffix(propertyDTOStructureSettings.getRepositorySuffix());
+        getPropertyDTO().setRepositoryPath(propertyDTOStructureSettings.getRepositoryPath());
+        getPropertyDTO().setPersistDTOSuffix(propertyDTOStructureSettings.getPersistDTOSuffix());
+        getPropertyDTO().setPersistDTOPath(propertyDTOStructureSettings.getPersistDTOPath());
+        getPropertyDTO().setUpdateDTOSuffix(propertyDTOStructureSettings.getUpdateDTOSuffix());
+        getPropertyDTO().setUpdateDTOPath(propertyDTOStructureSettings.getUpdateDTOPath());
+        getPropertyDTO().setResponseDTOSuffix(propertyDTOStructureSettings.getResponseDTOSuffix());
+        getPropertyDTO().setResponseDTOPath(propertyDTOStructureSettings.getResponseDTOPath());
+        getPropertyDTO().setControllerSuffix(propertyDTOStructureSettings.getControllerSuffix());
+        getPropertyDTO().setControllerPath(propertyDTOStructureSettings.getControllerPath());
+        getPropertyDTO().setEntitySuffix(propertyDTOStructureSettings.getEntitySuffix());
+        getPropertyDTO().setEntityPath(propertyDTOStructureSettings.getEntityPath());
+    }
+
+    public void setFunctionSettings(PropertyDTO propertyDTOFunctionSettings) {
+        getPropertyDTO().setFunctionFindById(propertyDTOFunctionSettings.getFunctionFindById());
+        getPropertyDTO().setEndpointFindById(propertyDTOFunctionSettings.getEndpointFindById());
+        getPropertyDTO().setFunctionCreate(propertyDTOFunctionSettings.getFunctionCreate());
+        getPropertyDTO().setEndpointCreate(propertyDTOFunctionSettings.getEndpointCreate());
+        getPropertyDTO().setFunctionDelete(propertyDTOFunctionSettings.getFunctionDelete());
+        getPropertyDTO().setEndpointDelete(propertyDTOFunctionSettings.getEndpointDelete());
+        getPropertyDTO().setFunctionUpdate(propertyDTOFunctionSettings.getFunctionUpdate());
+        getPropertyDTO().setEndpointUpdate(propertyDTOFunctionSettings.getEndpointUpdate());
+        getPropertyDTO().setFunctionFindAll(propertyDTOFunctionSettings.getFunctionFindAll());
+        getPropertyDTO().setEndpointFindAll(propertyDTOFunctionSettings.getEndpointFindAll());
     }
 }
